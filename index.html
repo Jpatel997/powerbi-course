@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Power BI for Tableau Users</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E1B2E;
+  --bg2: #152035;
+  --bg3: #1a2845;
+  --card: #1e2f50;
+  --border: #263d6b;
+  --yellow: #F2C811;
+  --yellow-dim: rgba(242,200,17,0.12);
+  --text: #e8edf5;
+  --text2: #9ab0cc;
+  --text3: #6b87aa;
+  --green: #3DBF6E;
+  --radius: 10px;
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; min-height: 100vh; }
+
+/* ── HEADER ── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(14,27,46,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.header-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; align-items: center; gap: 16px;
+  height: 56px;
+}
+.logo {
+  font-size: 15px; font-weight: 700; color: var(--yellow);
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.logo span { color: var(--text2); font-weight: 400; }
+.progress-wrap { flex: 1; }
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--text3); margin-bottom: 4px;
+}
+.progress-bar {
+  height: 6px; background: var(--border); border-radius: 99px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--yellow), var(--green));
+  transition: width .4s ease;
+}
+.btn-reset {
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text3); font-size: 12px; padding: 5px 10px; cursor: pointer;
+  font-family: var(--font); transition: .2s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.btn-reset:hover { border-color: var(--text3); color: var(--text); }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--bg2) 0%, #0a1828 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 56px 24px 48px;
+  text-align: center;
+}
+.hero-tag {
+  display: inline-block;
+  background: var(--yellow-dim); color: var(--yellow);
+  border: 1px solid rgba(242,200,17,0.3);
+  font-size: 12px; font-weight: 600; letter-spacing: .08em;
+  padding: 4px 12px; border-radius: 99px; margin-bottom: 20px; text-transform: uppercase;
+}
+.hero h1 { font-size: clamp(28px,5vw,46px); font-weight: 700; line-height: 1.15; margin-bottom: 14px; }
+.hero h1 span { color: var(--yellow); }
+.hero p { color: var(--text2); font-size: 16px; max-width: 560px; margin: 0 auto 28px; }
+.hero-stats {
+  display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-num { font-size: 28px; font-weight: 700; color: var(--yellow); }
+.stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+
+/* ── MAIN ── */
+main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── MODULE ── */
+.module { margin-bottom: 28px; }
+.module-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px;
+}
+.module-num {
+  background: var(--yellow-dim); color: var(--yellow);
+  border: 1px solid rgba(242,200,17,0.25);
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  padding: 3px 10px; border-radius: 99px; text-transform: uppercase; flex-shrink: 0;
+}
+.module-title { font-size: 17px; font-weight: 600; color: var(--text); flex: 1; }
+.module-prog-wrap {
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.module-prog-bar {
+  flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden;
+}
+.module-prog-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--yellow), var(--green));
+  transition: width .4s ease;
+}
+.module-prog-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+/* ── LESSON ROW ── */
+.lesson-row {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 6px;
+  overflow: hidden; transition: border-color .2s;
+}
+.lesson-row:hover { border-color: #3a5580; }
+.lesson-row.open { border-color: var(--yellow); }
+
+.lesson-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px; cursor: pointer; user-select: none;
+}
+.lesson-check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: .2s; cursor: pointer;
+}
+.lesson-check.done {
+  background: var(--green); border-color: var(--green);
+}
+.lesson-check.done::after {
+  content: '✓'; color: #fff; font-size: 11px; font-weight: 700;
+}
+.lesson-title {
+  flex: 1; font-size: 14px; font-weight: 500; color: var(--text);
+}
+.lesson-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 99px; flex-shrink: 0;
+}
+.lesson-chevron {
+  color: var(--text3); font-size: 12px; flex-shrink: 0; transition: transform .25s;
+}
+.lesson-row.open .lesson-chevron { transform: rotate(180deg); }
+
+.lesson-body {
+  display: none; border-top: 1px solid var(--border);
+  padding: 24px 20px;
+}
+.lesson-row.open .lesson-body { display: block; }
+
+/* ── LESSON CONTENT STYLES ── */
+.lesson-body h2 {
+  font-size: 20px; font-weight: 700; color: var(--text);
+  margin: 0 0 12px; line-height: 1.3;
+}
+.lesson-body h3 {
+  font-size: 15px; font-weight: 600; color: var(--yellow);
+  margin: 20px 0 8px;
+}
+.lesson-body p { font-size: 14px; color: var(--text2); margin-bottom: 12px; line-height: 1.7; }
+.lesson-body ul, .lesson-body ol {
+  margin: 0 0 14px 20px; color: var(--text2); font-size: 14px;
+}
+.lesson-body li { margin-bottom: 5px; line-height: 1.6; }
+.lesson-body strong { color: var(--text); font-weight: 600; }
+.lesson-body code {
+  background: var(--bg3); color: #93c5fd;
+  font-family: var(--mono); font-size: 12px;
+  padding: 1px 5px; border-radius: 4px;
+}
+.lesson-body pre {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin: 12px 0 16px;
+  overflow-x: auto;
+}
+.lesson-body pre code {
+  background: none; padding: 0; font-size: 12px; line-height: 1.6;
+  color: #93c5fd;
+}
+.lesson-body table {
+  width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px;
+}
+.lesson-body th, .lesson-body td {
+  text-align: left; padding: 8px 12px; border: 1px solid var(--border);
+}
+.lesson-body th { background: var(--bg3); color: var(--text); font-weight: 600; }
+.lesson-body td { color: var(--text2); }
+.callout {
+  background: var(--yellow-dim); border-left: 3px solid var(--yellow);
+  border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 14px 0;
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.callout pre { background: rgba(0,0,0,0.2); }
+.callout-green {
+  background: rgba(61,191,110,0.08); border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 14px 0;
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.callout-green pre { background: rgba(0,0,0,0.2); }
+
+/* ── LESSON ACTIONS ── */
+.lesson-actions {
+  display: flex; gap: 10px; align-items: center; margin-top: 20px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+.btn-complete {
+  background: var(--green); color: #fff;
+  border: none; border-radius: 7px; padding: 9px 18px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: var(--font); transition: .2s;
+}
+.btn-complete:hover { filter: brightness(1.1); }
+.btn-complete.done {
+  background: var(--border); color: var(--text3); cursor: default;
+}
+.btn-complete.done:hover { filter: none; }
+.btn-close {
+  background: none; border: 1px solid var(--border);
+  color: var(--text3); border-radius: 7px; padding: 9px 16px;
+  font-size: 13px; cursor: pointer; font-family: var(--font); transition: .2s;
+}
+.btn-close:hover { border-color: var(--text3); color: var(--text); }
+
+/* ── COMPLETION BANNER ── */
+.completion-banner {
+  display: none; text-align: center;
+  background: linear-gradient(135deg, rgba(61,191,110,0.15), rgba(242,200,17,0.1));
+  border: 1px solid var(--green); border-radius: var(--radius);
+  padding: 32px 24px; margin-bottom: 32px;
+}
+.completion-banner.show { display: block; }
+.completion-banner h2 { font-size: 22px; color: var(--green); margin-bottom: 8px; }
+.completion-banner p { color: var(--text2); font-size: 14px; }
+
+@media (max-width: 600px) {
+  .hero { padding: 36px 16px 32px; }
+  main { padding: 24px 16px 60px; }
+  .lesson-header { padding: 11px 12px; gap: 9px; }
+  .lesson-tag { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">Power BI <span>for Tableau Users</span></a>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Overall progress</span>
+        <span id="prog-text">0 / 39</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <button class="btn-reset" onclick="resetProgress()">Reset</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Self-paced course</div>
+  <h1>Power BI for<br><span>Tableau Users</span></h1>
+  <p>Skip the basics. Learn what's actually different — the mental models, DAX patterns, and gotchas that trip up experienced Tableau professionals.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">39</div><div class="stat-label">Lessons</div></div>
+    <div class="stat"><div class="stat-num">Free</div><div class="stat-label">Forever</div></div>
+  </div>
+</div>
+
+<main>
+  <div class="completion-banner" id="completion-banner">
+    <h2>🎉 Course Complete!</h2>
+    <p>You've finished all 39 lessons. You're ready to build real Power BI reports — and probably ready to sit the PL-300 exam too.</p>
+  </div>
+  <div id="course-root"></div>
+</main>
+
+<script>
+const LESSONS = {
+  "1-1": `<h2>Two completely different philosophies</h2>
+<p>Tableau is built around a <strong>visual-first</strong> workflow: you drag fields onto shelves and Tableau generates SQL on the fly against your source. The viz IS the query. Power BI flips this — it's <strong>model-first</strong>. You build a data model once, then build any number of visuals on top of it.</p>
+<div class="callout-green"><strong>Tableau approach:</strong> Connect → drag fields → Tableau writes live SQL → chart appears. Each workbook manages its own connection and query logic.</div>
+<p>In Power BI, there are three distinct phases that happen in order:</p>
+<ol>
+<li><strong>Get Data / Power Query</strong> — load and transform your raw data (like Tableau Prep, but built in)</li>
+<li><strong>Data Model</strong> — define relationships between tables, create calculated columns and measures in DAX</li>
+<li><strong>Report Canvas</strong> — build visuals that query the model, not the source directly</li>
+</ol>
+<p>This separation feels like extra work at first, but it pays off fast. Once your model is solid, every visual you add is instant — it's querying an in-memory compressed dataset, not re-hitting your database.</p>
+<div class="callout"><strong>Key implication:</strong> In Tableau, changing a data source can break your vizzes. In Power BI, changing a data source only breaks Power Query — your model and all your reports stay intact as long as column names match.</div>
+<h2>The .pbix file</h2>
+<p>Everything lives in a single <code>.pbix</code> file: your queries, your model, and your reports. Think of it like a Tableau Packaged Workbook (<code>.twbx</code>), but the data is always embedded.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Power BI is model-first; Tableau is visual-first. Build the model before touching the canvas.</li>
+<li>The three layers (Power Query → Model → Report) are separate and each has its own editor.</li>
+<li>A <code>.pbix</code> file contains everything — queries, model, and reports in one package.</li>
+</ul>`,
+  "1-2": `<h2>Why Power BI doesn't query your database every time</h2>
+<p>When you load data into Power BI Desktop, it imports and compresses everything into an <strong>in-memory columnar store</strong> called VertiPaq. This is fundamentally different from how Tableau handles data.</p>
+<div class="callout-green"><strong>Tableau comparison:</strong> With a live connection, every Tableau interaction generates a SQL query to your database. With an extract, Tableau uses a columnar store too (Hyper). Power BI's Import mode is most comparable to a Tableau extract.</div>
+<p>VertiPaq compresses data column-by-column rather than row-by-row. A column with 1 million rows of "USA" compresses to nearly nothing — it stores the value once plus a count. Aggregations like SUM and COUNT run directly against compressed columns, making them blindingly fast.</p>
+<h2>Import vs DirectQuery vs Composite</h2>
+<table><thead><tr><th>Mode</th><th>How it works</th><th>Best for</th></tr></thead>
+<tbody>
+<tr><td><strong>Import</strong></td><td>Data copied into VertiPaq. Fastest performance.</td><td>Most use cases — data up to ~1GB</td></tr>
+<tr><td><strong>DirectQuery</strong></td><td>Every visual fires a live query to the source</td><td>Real-time data, very large datasets</td></tr>
+<tr><td><strong>Composite</strong></td><td>Mix — some tables imported, some DirectQuery</td><td>When you need both speed and live data</td></tr>
+</tbody></table>
+<div class="callout"><strong>DirectQuery gotcha:</strong> Not all DAX functions work in DirectQuery mode, and performance depends entirely on your source database. Most Power BI developers default to Import and only switch to DirectQuery when genuinely needed.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Import mode = Power BI's equivalent of a Tableau extract. It's the default and fastest option.</li>
+<li>VertiPaq's columnar compression means Power BI often loads data that seems "too big" just fine.</li>
+<li>DirectQuery exists for real-time needs but comes with DAX restrictions — prefer Import unless you have a specific reason.</li>
+</ul>`,
+  "1-3": `<h2>Three environments, one ecosystem</h2>
+<p>Power BI isn't a single app — it's a suite of three environments that each serve a different purpose.</p>
+<h2>Power BI Desktop</h2>
+<p>This is where you do all your authoring. It's a <strong>free Windows application</strong> you download and install. Everything you build — data connections, the model, reports — happens here.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Power BI Desktop = Tableau Desktop. You build here, you publish from here.</div>
+<p>Desktop has three views in the left sidebar: <strong>Report</strong> (the canvas), <strong>Data</strong> (browse your tables), and <strong>Model</strong> (see and edit relationships).</p>
+<h2>Power BI Service</h2>
+<p>This is the web-based platform at <code>app.powerbi.com</code>. You publish from Desktop to the Service. End users consume reports here via a browser — no install needed. The Service also handles scheduled refresh, row-level security enforcement, sharing, and collaboration.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Power BI Service = Tableau Server or Tableau Cloud. It's where reports live once published.</div>
+<div class="callout"><strong>Important:</strong> You can make minor edits to reports in the Service, but serious work always goes back to Desktop. Don't try to build complex reports in the browser.</div>
+<h2>Power BI Mobile</h2>
+<p>iOS and Android apps for consuming reports on the go. You don't author here — it's purely for viewing. Reports designed in Desktop automatically adapt to mobile layout, or you can create a dedicated mobile layout in Desktop's View menu.</p>
+<h2>Power BI Report Server (on-premises)</h2>
+<p>If your org can't use the cloud, Report Server is an on-premises version of the Service. It's notably behind the cloud version in features — avoid it if you have a choice.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Build in Desktop (free, Windows), publish to Service (web, requires Pro license), consume anywhere.</li>
+<li>The Service handles refresh scheduling, RLS, and sharing — it's not just a viewer.</li>
+<li>Mobile is consumption-only; you can't author reports there.</li>
+</ul>`,
+  "1-4": `<h2>How Tableau turns drags into queries</h2>
+<p>In Tableau, when you drag a field to a shelf, the VizQL engine translates that action into a SQL or MDX query. The visualization is essentially a rendered query result. Tableau is always "thinking in SQL" under the hood.</p>
+<div class="callout-green"><strong>Tableau VizQL:</strong> Drag [Sales] to Rows + [Category] to Columns → Tableau generates <code>SELECT Category, SUM(Sales) FROM orders GROUP BY Category</code> and renders a bar chart.</div>
+<h2>How Power BI turns clicks into DAX queries</h2>
+<p>Power BI uses a query language called <strong>DAX</strong> (Data Analysis Expressions) under the hood. When you add a field to a visual, Power BI generates a DAX query against your in-memory model. When you write your own measures, you're writing in the same language the engine uses internally.</p>
+<p>The bigger difference: Power BI visuals don't query a database — they query the <strong>model</strong>. All the aggregation logic lives in DAX measures you define, not in ad-hoc SQL generated per visual.</p>
+<h2>What this means practically</h2>
+<p>In Tableau, you can drag a dimension to Color and a measure to Size and Tableau figures it out. In Power BI:</p>
+<ul>
+<li>You need to define what a "measure" is explicitly — a DAX formula stored in the model</li>
+<li>Visuals have specific field wells (Axis, Values, Legend) that you drop fields into</li>
+<li>The model pre-defines aggregation behavior — you write it once as a measure, not per-drag</li>
+</ul>
+<div class="callout"><strong>The upside:</strong> Because measures are defined once in the model, every visual using <code>Total Sales</code> uses the exact same formula. No drift between charts. In Tableau, it's easy for the same metric to be calculated differently across sheets.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Tableau generates SQL per interaction; Power BI generates DAX queries against a pre-built model.</li>
+<li>Measures in Power BI replace both Tableau's calculated fields and its drag-to-aggregate behavior.</li>
+<li>Defining metrics once in the model means consistency — a metric means the same thing in every visual.</li>
+</ul>`,
+  "1-5": `<h2>Power BI licensing simplified</h2>
+<p>Microsoft has restructured Power BI licensing multiple times. Here's what actually matters for most users.</p>
+<h2>Power BI Desktop — Free</h2>
+<p>Download and use it forever for local development. The catch: you can't share or publish to the cloud without a paid license.</p>
+<h2>Power BI Pro (~$10/user/month)</h2>
+<p>The standard paid tier. You need Pro to publish reports to the Service, share with others (both you AND the viewer need Pro), and access organizational workspaces.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Power BI Pro ≈ Tableau Creator for the author, but viewers also need a license — similar to Tableau Viewer licenses.</div>
+<h2>Premium Per User (~$20/user/month)</h2>
+<p>Unlocks advanced features: paginated reports, AI features, larger dataset limits, deployment pipelines. The step between Pro and full Premium capacity.</p>
+<h2>Premium Capacity / Fabric</h2>
+<p>An organizational subscription (not per-user) that buys dedicated compute. With Premium Capacity, <strong>viewers don't need a Pro license</strong> — they can view published reports for free. This makes Power BI economical at scale.</p>
+<p>Microsoft Fabric (launched 2023) is the broader umbrella that includes Power BI alongside data engineering, data science, and warehouse tools. If your org is on Fabric, Power BI is included.</p>
+<div class="callout"><strong>Practical advice:</strong> For personal learning, Desktop is free. For sharing with a team, both you and viewers need at minimum Pro. For org-wide deployment, Premium Capacity is usually more economical than per-user Pro for everyone.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Desktop is always free. Pro (~$10/mo) is needed to publish and share.</li>
+<li>Both the author AND viewers need Pro licenses unless the org has Premium Capacity.</li>
+<li>Microsoft Fabric is the future umbrella — Power BI is one component of it.</li>
+</ul>`,
+  "2-1": `<h2>Power Query is your ETL layer — and it's built in</h2>
+<p>In Tableau, data prep happens either in Tableau Prep (a separate app) or by writing calculated fields in the workbook. In Power BI, there's a dedicated ETL environment built directly into Desktop: <strong>Power Query Editor</strong>.</p>
+<div class="callout-green"><strong>Tableau Prep vs Power Query:</strong> Tableau Prep is a visual flow-based tool you run before opening Tableau Desktop. Power Query is embedded inside Power BI Desktop — you switch to it via Home → Transform Data. No separate app or license needed.</div>
+<h2>What Power Query actually does</h2>
+<p>Power Query sits between your raw data source and your data model. It's where you:</p>
+<ul>
+<li>Rename and reorder columns, change data types</li>
+<li>Filter rows, remove duplicates</li>
+<li>Pivot/unpivot data</li>
+<li>Merge (join) or Append (union) multiple tables</li>
+<li>Add custom columns using M formula language</li>
+</ul>
+<p>Power Query transformations happen <strong>before</strong> data loads into the model. Once data is in the model, you can't reshape it with Power Query — you use DAX measures instead.</p>
+<h2>What Power Query is NOT</h2>
+<p>Power Query is not for analysis or business logic calculations. Don't add complex business rules here — use DAX measures for that. Power Query is purely about getting clean, correctly shaped data into the model. If a data engineer would do it in a SQL transformation, it belongs in Power Query.</p>
+<div class="callout"><strong>Avoid heavy calculations in Power Query.</strong> Lots of custom M columns slow refresh time. Only do what's necessary to get clean, flat tables — let DAX handle aggregations and business logic.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Power Query = Tableau Prep, but built into Desktop. No separate app or license needed.</li>
+<li>Power Query handles data shape and cleanliness; DAX handles business logic and calculations.</li>
+<li>Every UI click in the Query Editor generates M code — you can always inspect or edit it directly.</li>
+</ul>`,
+  "2-2": `<h2>Getting your first data source in</h2>
+<p>In Power BI Desktop, click <strong>Home → Get Data</strong>. You'll see a connector library with 100+ sources: Excel, SQL Server, SharePoint, Salesforce, Google Analytics, REST APIs, and more. For practice, Excel or CSV is the easiest starting point.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is the same as Tableau's Connect pane. The connector list is comparable — Power BI compensates for any gaps with custom connectors via the M language.</div>
+<h2>The Query Editor UI — what you're looking at</h2>
+<p>After connecting, click <strong>Transform Data</strong> to open the Power Query Editor. The layout:</p>
+<ul>
+<li><strong>Left — Queries pane:</strong> Each table or query you've loaded. Like Tableau's data source tabs, but all visible at once.</li>
+<li><strong>Center — Data Preview:</strong> The first 1000 rows of your current query.</li>
+<li><strong>Right — Applied Steps:</strong> Every transformation you've done, in order. The most important panel to understand.</li>
+<li><strong>Formula bar:</strong> Shows the M code for the currently selected step. You can edit it directly.</li>
+</ul>
+<h2>Making your first transformations</h2>
+<p>Right-click any column header to see options: rename, change type, remove, split, etc. Most common first tasks:</p>
+<ul>
+<li><strong>Set correct data types</strong> — Power Query often guesses wrong. Dates especially. Click the type icon left of the column name.</li>
+<li><strong>Promote headers</strong> — if row 1 contains your headers (common with Excel): Home → Use First Row as Headers.</li>
+<li><strong>Remove top rows</strong> — for Excel files with title rows above the actual data table.</li>
+</ul>
+<div class="callout"><strong>Always check data types first.</strong> A date stored as text will break every time intelligence DAX function. Set types before doing anything else.</div>
+<h2>Applying changes</h2>
+<p>In the Query Editor, you're working on a preview — nothing loads into the model until you click <strong>Home → Close &amp; Apply</strong>. Make many changes cheaply in the editor, then apply once at the end.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Get Data → Transform Data opens the Query Editor. Explore it before loading anything.</li>
+<li>The Applied Steps pane on the right is your transformation history — every step is editable.</li>
+<li>Always verify data types (especially dates) before closing and applying.</li>
+</ul>`,
+  "2-3": `<h2>Applied Steps: your transformation pipeline</h2>
+<p>The most powerful concept in Power Query is <strong>Applied Steps</strong>. Every transformation you perform gets recorded as a named step in the right-hand pane. These steps execute in order, top to bottom, every time your data refreshes.</p>
+<div class="callout-green"><strong>Tableau Prep equivalent:</strong> Applied Steps are similar to Prep's flow canvas, but linear rather than branching. Each step is like a Prep cleaning node, executed sequentially.</div>
+<p>You can click any step to preview your data at that point in the pipeline. You can delete steps, reorder them, and insert new steps between existing ones — making debugging data issues much easier than stacking Tableau calculated fields.</p>
+<pre><code>Example Applied Steps for a typical Excel import:
+  Source                ← connects to the file
+  Navigation            ← selects Sheet1
+  Promoted Headers      ← row 1 becomes column names
+  Changed Type          ← sets data types
+  Removed Columns       ← dropped unused columns
+  Filtered Rows         ← removed null/test records
+  Renamed Columns       ← "Cust_ID" → "Customer ID"</code></pre>
+<h2>Renaming steps — always do this</h2>
+<p>Right-click any step → Rename. "Filtered Rows" is meaningless; "Removed cancelled orders" is clear. Always rename your steps so the pipeline is self-documenting.</p>
+<h2>The danger of reordering</h2>
+<p>Steps can depend on previous steps. Dragging "Removed Columns" above "Changed Type" might break if the type change referenced a column you then removed. Power Query will warn you about downstream errors when this happens.</p>
+<div class="callout"><strong>Insert steps between existing ones:</strong> Click the step you want to insert after, then make your transformation. Power Query inserts at the selected position, not the end. Also: right-click a step → Disable to skip it without deleting — useful for debugging.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Applied Steps is a linear pipeline of named transformations that run top-to-bottom on every refresh.</li>
+<li>Click any step to preview data at that point — invaluable for debugging data issues.</li>
+<li>Rename every step descriptively — self-documenting pipelines save time when you return to them later.</li>
+</ul>`,
+  "2-4": `<h2>Joining tables: Merge Queries</h2>
+<p>In Tableau, you join tables by dragging them together at the data source level and selecting join type. Power Query does this with <strong>Merge Queries</strong>.</p>
+<div class="callout-green"><strong>Tableau join → Power Query Merge:</strong><br>
+Tableau: Drag second table onto canvas, select join type, pick matching fields.<br>
+Power Query: Home → Merge Queries → select second table → choose matching columns → select join kind.</div>
+<p>Power Query supports all standard join types: Left Outer, Right Outer, Full Outer, Inner, Left Anti (rows in left table with no match in right), Right Anti.</p>
+<p>After merging, you'll see a new column containing the nested merged table. Click the expand icon (double arrow) to select which columns to bring in from the joined table.</p>
+<h2>Unioning tables: Append Queries</h2>
+<p>To stack tables with the same columns (a union), use <strong>Append Queries</strong> (Home → Append Queries). You can append two tables or choose "Three or more tables" to union multiple at once.</p>
+<div class="callout-green"><strong>Tableau union → Power Query Append:</strong><br>
+Tableau: Drag second table below first in the data source canvas to union them.<br>
+Power Query: Home → Append Queries → select the tables to stack.</div>
+<div class="callout"><strong>Important: prefer model relationships over Power Query merges.</strong> Merging in Power Query creates a flat denormalized table, which is less efficient than a star schema with model relationships. Only merge when you genuinely need to flatten data — for most multi-table scenarios, define the relationship in the Model view instead (covered in Module 3).</div>
+<h2>When to merge vs when to relate</h2>
+<ul>
+<li><strong>Merge in Power Query</strong> — when you need to pull a lookup value into a table (e.g., adding a category name column to a fact table)</li>
+<li><strong>Relate in the Model</strong> — when two tables should stay separate and connect via a key (the preferred approach)</li>
+</ul>
+<h3>Key takeaways</h3>
+<ul>
+<li>Merge = JOIN, Append = UNION — the concepts map directly from Tableau and SQL.</li>
+<li>Prefer model relationships over Power Query merges for most multi-table scenarios.</li>
+<li>After merging, expand the nested column to select which fields from the joined table to include.</li>
+</ul>`,
+  "2-5": `<h2>What is M?</h2>
+<p>M (the Power Query Formula Language) is the functional language that runs under every transformation in the Query Editor. Every click in the UI generates M code automatically. You rarely need to write M by hand — but knowing its structure helps when the UI can't do what you need.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> There's no real Tableau equivalent. Tableau Prep's cleaning steps don't expose a formula language. M is more like the SQL that Tableau generates for a live connection — except you can actually read and edit it.</div>
+<h2>What M code looks like</h2>
+<p>Every query is a series of <code>let</code> bindings followed by an <code>in</code> statement:</p>
+<pre><code>let
+    Source = Excel.Workbook(File.Contents("C:\\data\\sales.xlsx"), null, true),
+    Sheet1 = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+    PromotedHeaders = Table.PromoteHeaders(Sheet1, [PromoteAllScalars=true]),
+    FilteredRows = Table.SelectRows(PromotedHeaders, each [Region] = "West")
+in
+    FilteredRows</code></pre>
+<p>Each step is a variable. The final variable after <code>in</code> is what gets returned to the model. This maps directly to the Applied Steps list you see in the UI.</p>
+<h2>When you actually need to write M</h2>
+<ul>
+<li><strong>Dynamic file paths</strong> — parameterizing a path so it changes per environment</li>
+<li><strong>Custom functions</strong> — applying the same transformation to multiple queries</li>
+<li><strong>Calling REST APIs</strong> — using <code>Web.Contents()</code> with custom headers and pagination</li>
+<li><strong>Complex conditional logic</strong> — things the UI can't express cleanly</li>
+</ul>
+<div class="callout"><strong>Parameters are the most useful M feature to learn first.</strong> Create a parameter (Manage Parameters → New Parameter) to store a file path, server name, or date cutoff. Your queries reference the parameter, so changing it in one place updates everything. This is the Power Query equivalent of a Tableau parameter.</div>
+<h2>Accessing the Advanced Editor</h2>
+<p>View → Advanced Editor shows the full M code for any query. Edit it directly. Changes take effect when you click Done.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>M is generated automatically — you don't need to learn it to use Power Query, but reading it helps debugging.</li>
+<li>The <code>let ... in</code> structure maps directly to the Applied Steps list in the Query Editor.</li>
+<li>Parameters are the most practical M feature to learn first — they make queries reusable across environments.</li>
+</ul>`,
+  "2-6": `<h2>How data stays fresh</h2>
+<p>In Tableau, a live connection queries your database on every interaction; an extract refreshes on a schedule. Power BI has the same split with different terminology.</p>
+<div class="callout-green"><strong>Tableau Extract refresh → Power BI scheduled refresh:</strong> Tableau refreshes extracts via Tableau Server's schedule. Power BI refreshes Import-mode datasets via the Power BI Service on a schedule you define. Both require the source to be reachable at refresh time.</div>
+<h2>Import mode refresh</h2>
+<p>If your dataset is in Import mode (the default), Power BI takes a full snapshot of your data on a schedule you define in the Service. You can refresh up to 8 times per day on Pro, 48 times on Premium. Data is stale between refreshes — just like a Tableau extract.</p>
+<p>To set up: Service → your dataset → Settings → Scheduled refresh. You'll also need to configure a data gateway if your source is on-premises.</p>
+<h2>DirectQuery</h2>
+<p>In DirectQuery mode, every visual generates a live query to your source database. Data is always current, but performance depends entirely on your database. No refresh schedule needed — but no caching either.</p>
+<div class="callout"><strong>DirectQuery limitations:</strong> Many DAX functions don't work in DirectQuery mode. Time intelligence functions are particularly restricted. Test your DAX measures early if you're in DirectQuery mode — you'll hit walls.</div>
+<h2>The On-Premises Data Gateway</h2>
+<p>If your data source lives behind a corporate firewall (SQL Server, Oracle, SharePoint on-prem), the Power BI Service can't reach it directly. You install the <strong>On-Premises Data Gateway</strong> on a machine inside your network. It acts as a secure bridge between the Service and your source — equivalent to Tableau's Bridge connector.</p>
+<h2>Incremental refresh</h2>
+<p>For large tables, loading all rows on every refresh is slow. Incremental refresh (Premium/PPU feature) lets you define a date range — only new or changed rows get updated. This is the Power BI equivalent of Tableau's incremental extract refresh.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Import mode = scheduled refresh (like Tableau extracts). DirectQuery = always live (like Tableau live connection).</li>
+<li>The On-Premises Data Gateway is required for refreshing data from behind a firewall.</li>
+<li>DirectQuery removes the refresh problem but creates DAX function limitations and source-dependent performance.</li>
+</ul>`,
+  "3-1": `<h2>Tableau blending vs Power BI relationships</h2>
+<p>In Tableau, when you bring in a secondary data source, Tableau uses <strong>data blending</strong> — it queries each source separately and joins results in the visualization layer. It's convenient but fragile and limited (aggregate-level joins only, asterisks when dimensions have multiple values).</p>
+<p>Power BI takes a fundamentally different approach: you define explicit <strong>relationships</strong> between tables in the data model once, and all visuals use those relationships automatically — at the row level.</p>
+<div class="callout-green"><strong>Tableau blending vs Power BI relationships:</strong><br>
+Tableau: queries source A, queries source B, joins results per-viz. Aggregate-level only.<br>
+Power BI: relationships defined once in the Model. Every visual uses them automatically. Row-level joins fully supported.</div>
+<h2>How relationships work in Power BI</h2>
+<p>A relationship connects two tables via a <strong>key column</strong>. For example: Sales table has <code>ProductID</code>, Products table has <code>ProductID</code>. You draw a relationship between them. Now any DAX measure that touches Sales can also access columns from Products without any manual joining.</p>
+<pre><code>Sales[ProductID]  ──────  Products[ProductID]
+  (many side)               (one side)</code></pre>
+<div class="callout"><strong>Power BI always requires one side to be unique.</strong> The "one" side of a relationship must have unique values in the key column. If it doesn't, Power BI creates a many-to-many relationship, which has different (and often unexpected) filter behavior. Always check for duplicate keys on your dimension tables.</div>
+<h2>Relationships replace Tableau's JOIN at the data source layer</h2>
+<p>If you were joining tables in Tableau's data source canvas, you'd replace those with Power Query merges or (better) with model relationships. Model relationships are more flexible — you can have the same fact table connected to many dimension tables simultaneously, with each dimension filtering independently.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Forget Tableau blending — Power BI uses explicit model relationships that work at the row level.</li>
+<li>Every relationship needs a unique key on the "one" side (the dimension table).</li>
+<li>Once a relationship is defined, all DAX measures automatically use it — no per-viz configuration needed.</li>
+</ul>`,
+  "3-2": `<h2>Why Power BI models look like stars</h2>
+<p>The ideal Power BI data model is a <strong>star schema</strong>: one or more central <strong>fact tables</strong> surrounded by <strong>dimension tables</strong>. This isn't Power BI-specific — it's a data warehousing pattern that Power BI's engine is heavily optimized for.</p>
+<div class="callout-green"><strong>Tableau context:</strong> Tableau works fine with denormalized flat tables (one big table with everything). Power BI can too, but a star schema gives significantly better performance and simpler DAX. For any model beyond toy datasets, think in terms of facts and dimensions.</div>
+<h2>Fact tables</h2>
+<p>A fact table contains your measurable events — sales transactions, website clicks, support tickets. Key characteristics:</p>
+<ul>
+<li>One row per event (high row count, often millions)</li>
+<li>Mostly numeric columns — the things you measure: amount, quantity, duration</li>
+<li>Foreign key columns that reference dimension tables (ProductID, CustomerID, DateID)</li>
+</ul>
+<pre><code>Sales (fact table)
+  OrderID      ← primary key
+  DateID       ← foreign key → Date table
+  ProductID    ← foreign key → Products table
+  CustomerID   ← foreign key → Customers table
+  Quantity
+  SalesAmount</code></pre>
+<h2>Dimension tables</h2>
+<p>Dimension tables contain your descriptive attributes — the things you group, filter, and label by:</p>
+<ul>
+<li>One row per entity (much smaller — one row per product, customer, or date)</li>
+<li>Mostly text columns (names, categories, regions)</li>
+<li>A primary key column that the fact table references</li>
+</ul>
+<div class="callout"><strong>Always build a dedicated Date table.</strong> Don't rely on dates in your fact table directly. Create a separate Date dimension with every date in your analysis range, plus Year, Quarter, Month, Week, DayOfWeek columns. Power BI's time intelligence DAX functions require this pattern. See lesson 3-6.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Fact tables = what happened (transactions, events). Dimension tables = the context (who, what, when, where).</li>
+<li>Aim for a star schema: one fact table in the center, dimension tables around it, each connected by a key.</li>
+<li>A separate Date table is non-negotiable for any time-based analysis in Power BI.</li>
+</ul>`,
+  "3-3": `<h2>Opening the Model view</h2>
+<p>Click the <strong>Model icon</strong> (third icon in the left sidebar — three connected boxes) to enter Model view. You'll see all your loaded tables as boxes, with lines between them where Power BI has auto-detected relationships.</p>
+<div class="callout"><strong>Auto-detected relationships are often wrong.</strong> Power BI guesses relationships based on matching column names. It's right maybe 60% of the time. Always review auto-detected relationships before building any visuals — a wrong relationship silently produces incorrect numbers.</div>
+<h2>Creating a relationship</h2>
+<p>Two ways:</p>
+<ol>
+<li><strong>Drag and drop:</strong> Click a key column in one table and drag it to the matching column in another. A line appears.</li>
+<li><strong>Manage Relationships dialog:</strong> Home → Manage Relationships → New. Select both tables, choose the key columns, set the cardinality and cross-filter direction.</li>
+</ol>
+<p>The drag-and-drop method is faster; the dialog gives you more control over settings.</p>
+<h2>Reading a relationship line</h2>
+<pre><code>Products [1] ────────── [*] Sales
+(unique ProductID)       (many rows per product)</code></pre>
+<ul>
+<li><strong>1</strong> on one end — the "one" side (dimension table with unique key)</li>
+<li><strong>*</strong> on the other end — the "many" side (fact table with repeating foreign key)</li>
+<li>Arrow showing cross-filter direction (covered in lesson 3-4)</li>
+</ul>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is similar to setting up joins in Tableau's data source canvas, except you're defining them once for the whole model, not per-worksheet.</div>
+<h2>Editing and deleting relationships</h2>
+<p>Double-click any relationship line to edit it — change key columns, cardinality, or cross-filter direction. You can also deactivate a relationship without deleting it (useful for role-playing dimensions in lesson 3-6). Click the line and press Delete to remove it entirely.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Model view is where you define and manage all relationships — always review it before building reports.</li>
+<li>Drag from the key column in one table to the matching column in another to create a relationship.</li>
+<li>The 1-side must have unique values; the *-side can have duplicates. Verify this — wrong cardinality causes incorrect results.</li>
+</ul>`,
+  "3-4": `<h2>What cross-filter direction controls</h2>
+<p>When a user clicks a slicer or a visual, Power BI applies a filter. Cross-filter direction controls <strong>which tables that filter can flow into</strong> across a relationship.</p>
+<p>With a standard one-to-many relationship between Products [1] and Sales [*], a filter on Products automatically flows into Sales. That's single direction — from the one-side (dimension) to the many-side (fact). This is the default and correct behavior for 95% of situations.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is loosely similar to Tableau's relationship context and LOD expressions — in Tableau, filters can unexpectedly affect calculations across data sources. In Power BI, cross-filter direction is explicit and controllable.</div>
+<h2>Single direction (default — use this)</h2>
+<pre><code>Products ──────→ Sales
+  (filter flows this way)
+  Filtering "Category = Electronics" filters Sales rows automatically</code></pre>
+<p>Filter flows from the dimension to the fact. Selecting a category in a slicer filters the sales data. This is what you want.</p>
+<h2>Bidirectional — approach with caution</h2>
+<p>Filter flows in both directions. Selecting a Sales record can now also filter the Products table. This sounds useful but causes serious problems:</p>
+<ul>
+<li>Creates <strong>circular filter loops</strong> in complex models</li>
+<li>Leads to unexpected filtering where measures appear lower than expected</li>
+<li>Noticeably slower performance</li>
+</ul>
+<div class="callout"><strong>Avoid bidirectional relationships as a default.</strong> They seem like they make everything "just work," but introduce subtle bugs that are hard to diagnose. The right solution for most bidirectional needs is the CROSSFILTER() DAX function used inside a specific measure — not a model-level bidirectional setting.</div>
+<h2>When bidirectional is legitimately needed</h2>
+<p>Many-to-many relationships via a bridge table, or some row-level security patterns where filters need to flow from a security table. These are specific, intentional uses — not a general setting to enable everywhere.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Single direction = filter flows from dimension (1-side) to fact (*-side). This is almost always what you want.</li>
+<li>Bidirectional = filters flow both ways. Avoid by default — it causes subtle, hard-to-diagnose bugs.</li>
+<li>If you need bidirectional-like behavior in a specific measure, use CROSSFILTER() inside that measure instead.</li>
+</ul>`,
+  "3-5": `<h2>When many-to-many happens</h2>
+<p>A many-to-many (M2M) relationship exists when neither side of a relationship has unique keys. For example: a Sales table where one order has multiple products, and a Products table where one product appears in multiple orders. Both sides have repeating values in the key column.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Tableau handles M2M joins with data blending or joining at an aggregate level, often producing the dreaded asterisk (*) in measures. Power BI has explicit M2M support but with important caveats — it's not a free lunch.</div>
+<h2>Power BI's M2M support</h2>
+<p>Power BI supports many-to-many cardinality directly (set it in the relationship dialog). However, filter behavior is different from one-to-many: filters propagate in both directions by default, which can cause double-counting and unexpected aggregation results.</p>
+<div class="callout"><strong>Many-to-many almost always means your model needs restructuring.</strong> Before using M2M relationships, ask: can I solve this with a bridge table? Most M2M scenarios are better solved by creating an intermediate table that breaks the relationship into two one-to-many relationships.</div>
+<h2>The bridge table pattern</h2>
+<p>Customers can belong to multiple Segments; Segments contain multiple Customers. Instead of direct M2M, create a bridge table:</p>
+<pre><code>Customers [1] ── [*] CustomerSegmentBridge [*] ── [1] Segments
+  CustomerID              CustomerID                    SegmentID
+                          SegmentID</code></pre>
+<p>Now both relationships are one-to-many. Filters flow cleanly. No double-counting.</p>
+<h2>When M2M is legitimately appropriate</h2>
+<p>Budget vs actuals is a common use case. Budget data is at month+category level; Sales is at transaction level. A M2M on shared dimensions can work — but test your measures carefully for double-counting before publishing.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>M2M relationships are supported but change filter propagation — they can cause double-counting if not handled carefully.</li>
+<li>The bridge table pattern (breaking M2M into two one-to-many relationships) is almost always the better solution.</li>
+<li>If you find yourself needing M2M, first ask whether the model design can be restructured to avoid it.</li>
+</ul>`,
+  "3-6": `<h2>The problem with using dates directly from fact tables</h2>
+<p>Your Sales table probably has an <code>OrderDate</code> column. It's tempting to use it directly. Don't. Power BI's time intelligence DAX functions (SAMEPERIODLASTYEAR, TOTALYTD, etc.) require a dedicated, standalone Date table to work correctly.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> In Tableau, you can drop a date field on a shelf and use DATETRUNC, DATEDIFF freely — Tableau handles date logic automatically. Power BI requires you to explicitly build and connect a Date table. More work upfront, but it gives you much more control over fiscal calendars, custom periods, and date hierarchies.</div>
+<h2>What a Date table needs</h2>
+<ul>
+<li>One row for every date in your analysis range (no gaps)</li>
+<li>A date column with unique values and no nulls</li>
+<li>Marked as a Date Table in Power BI (right-click the table in Model view → Mark as Date Table)</li>
+</ul>
+<p>Beyond those requirements, add whatever date attributes you need: Year, Quarter, Month, MonthNum, WeekNum, DayOfWeek, IsWeekend, IsFiscalYear, etc.</p>
+<h2>Creating a Date table with DAX</h2>
+<p>Home → New Table, then enter this formula:</p>
+<pre><code>Date = 
+ADDCOLUMNS(
+    CALENDAR(DATE(2020,1,1), DATE(2026,12,31)),
+    "Year", YEAR([Date]),
+    "Month", MONTH([Date]),
+    "MonthName", FORMAT([Date], "MMMM"),
+    "Quarter", "Q" &amp; QUARTER([Date]),
+    "DayOfWeek", WEEKDAY([Date], 2)
+)</code></pre>
+<h2>Role-playing dimensions</h2>
+<p>Your fact table often has multiple date columns: OrderDate, ShipDate, DeliveryDate. You can only have one <em>active</em> relationship between a table pair. Connect OrderDate as the active relationship, then create inactive relationships for the others. Use USERELATIONSHIP() in specific measures to activate an alternate relationship:</p>
+<pre><code>Shipped Revenue = 
+CALCULATE(
+    SUM(Sales[Revenue]),
+    USERELATIONSHIP(Sales[ShipDate], Date[Date])
+)</code></pre>
+<h3>Key takeaways</h3>
+<ul>
+<li>Always create a separate Date table — don't use dates directly from your fact table for time intelligence.</li>
+<li>Mark it as a Date Table in Power BI and connect it to every date column in your fact tables.</li>
+<li>Use USERELATIONSHIP() to activate inactive relationships for role-playing date dimensions.</li>
+</ul>`,
+  "4-1": `<h2>The most important distinction in all of DAX</h2>
+<p>Power BI has two types of DAX calculations: <strong>Measures</strong> and <strong>Calculated Columns</strong>. Choosing the wrong one is the single most common mistake Tableau users make when learning Power BI.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Both look like Tableau calculated fields. But they behave very differently. In Tableau, a calculated field evaluates per row at query time. In Power BI, a calculated column evaluates per row at <em>load time</em> and is stored; a measure evaluates at <em>query time</em> in response to the current filter context.</div>
+<h2>Calculated Columns</h2>
+<p>A calculated column is a new column added to a table, computed row by row when data loads. It's stored in the model like any other column and takes up memory.</p>
+<pre><code>// Calculated Column — runs once at load time, stored in model
+Profit Margin = Sales[Profit] / Sales[Revenue]</code></pre>
+<p><strong>Use calculated columns for:</strong> Row-level attributes you need to filter or group by (a bucketed category based on a value), text concatenation for display labels, anything you need to use in a slicer.</p>
+<div class="callout"><strong>Calculated columns consume memory.</strong> Every calculated column is stored in VertiPaq and adds to file size. If you could achieve the same result with a measure, use a measure.</div>
+<h2>Measures</h2>
+<p>A measure is a formula evaluated dynamically in response to the current filter context — what's selected in slicers, what's on the visual axes, what page filters are applied. Not stored as data; computed on demand.</p>
+<pre><code>// Measure — runs dynamically based on current filter context
+Total Sales = SUM(Sales[Revenue])
+// Returns different numbers per row in a table visual
+// Returns only West sales when "West" is selected in a Region slicer</code></pre>
+<p><strong>Use measures for:</strong> Virtually all calculations you'd put in a viz — totals, averages, ratios, YoY comparisons, running totals. If it changes based on what's filtered, it's a measure.</p>
+<h2>Quick rule of thumb</h2>
+<ul>
+<li>If you want to <strong>filter or slice by it</strong> → Calculated Column</li>
+<li>If you want to <strong>aggregate it in a visual</strong> → Measure</li>
+</ul>
+<h3>Key takeaways</h3>
+<ul>
+<li>Calculated Columns: computed at load time, stored row by row, use for filterable attributes.</li>
+<li>Measures: computed at query time, respond to filter context, use for all aggregations and KPIs.</li>
+<li>When in doubt, use a measure — they're more flexible and don't add to model file size.</li>
+</ul>`,
+  "4-2": `<h2>The concept that makes DAX click</h2>
+<p>If you understand filter context and row context, DAX will make sense. If you don't, you'll write measures that seem to work until they don't — and you won't know why. This is worth reading twice.</p>
+<h2>Row Context</h2>
+<p>Row context exists when DAX is iterating over the rows of a table. It knows which row it's currently on. Calculated columns always have row context — <code>Sales[Profit] / Sales[Revenue]</code> evaluates for each row individually, knowing that row's Profit and Revenue values.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Row context = Tableau's row-level calculated field. <code>[Profit] / [Revenue]</code> evaluates per row in your data source. Same concept.</div>
+<p>Iterator functions like SUMX, AVERAGEX also create row context — they loop through a table row by row:</p>
+<pre><code>// SUMX creates row context — multiplies Quantity × Price per row, then sums
+Total Revenue = SUMX(Sales, Sales[Quantity] * Sales[UnitPrice])</code></pre>
+<h2>Filter Context</h2>
+<p>Filter context is the set of filters currently applied to the model. When a user clicks "West" in a Region slicer, the filter context includes <code>Region = "West"</code>. Every measure re-evaluates under the current filter context automatically.</p>
+<p>This is why <code>SUM(Sales[Revenue])</code> returns different numbers on different rows of a table visual — the filter context changes row by row (each row applies its own category filter).</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Filter context is similar to how Tableau applies dimension filters to a viz — but in Power BI it's more explicit and controllable via DAX functions like CALCULATE.</div>
+<h2>The key gotcha: measures have no row context</h2>
+<p>A measure evaluates in filter context, not row context. You can't write <code>Sales[Revenue]</code> directly in a measure and expect "which row" — there is no current row. You must aggregate: <code>SUM(Sales[Revenue])</code>.</p>
+<div class="callout"><strong>CALCULATE() modifies filter context.</strong> Nearly everything interesting in DAX involves using CALCULATE to add, remove, or change filters on a measure evaluation. This is the next lesson — it's the most important function in DAX.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Row context = "which row am I on?" — exists in calculated columns and iterator functions like SUMX.</li>
+<li>Filter context = "what filters are applied right now?" — exists for all measures, changes per visual cell.</li>
+<li>Measures must aggregate (SUM, COUNT, etc.) — they don't have row context unless inside an iterator.</li>
+</ul>`,
+  "4-3": `<h2>CALCULATE: the one function that changes everything</h2>
+<p>If you only learn one DAX function deeply, make it CALCULATE. It's used in the majority of non-trivial DAX measures. Its job: evaluate an expression in a <strong>modified filter context</strong>.</p>
+<pre><code>CALCULATE(expression, filter1, filter2, ...)</code></pre>
+<div class="callout-green"><strong>Tableau equivalent:</strong> CALCULATE is most similar to a Fixed LOD expression — it lets you control what filters are applied when a calculation runs, independently of what's on the viz. But it's more powerful and more general-purpose.</div>
+<h2>Basic example</h2>
+<pre><code>// Without CALCULATE — affected by all current filters
+Total Sales = SUM(Sales[Revenue])
+
+// With CALCULATE — forces Region = "West" regardless of any slicer
+West Sales = CALCULATE(SUM(Sales[Revenue]), Sales[Region] = "West")</code></pre>
+<p>Even if a user selects "East" in a Region slicer, West Sales always returns West numbers because CALCULATE overrides that filter.</p>
+<h2>CALCULATE adds, removes, or replaces filters</h2>
+<ol>
+<li><strong>Add a filter:</strong> <code>CALCULATE([Total Sales], Sales[Region] = "West")</code></li>
+<li><strong>Remove a filter</strong> using ALL: <code>CALCULATE([Total Sales], ALL(Sales[Region]))</code> — ignores any Region filter</li>
+<li><strong>Replace a filter:</strong> The new filter argument replaces any existing filter on that column</li>
+</ol>
+<h2>% of Total — a classic CALCULATE pattern</h2>
+<pre><code>% of Total Sales = 
+DIVIDE(
+    [Total Sales],
+    CALCULATE([Total Sales], ALL(Sales))
+)</code></pre>
+<p>The denominator uses ALL(Sales) to remove all filters on the Sales table, giving the grand total regardless of what's filtered. The numerator still respects current filters. Divide one by the other for percentage of total.</p>
+<div class="callout-green"><strong>Tableau TOTAL() → CALCULATE with ALL():</strong><br>
+Tableau: <code>SUM([Sales]) / TOTAL(SUM([Sales]))</code><br>
+Power BI: <code>DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Sales)))</code></div>
+<div class="callout"><strong>Always use DIVIDE() instead of /.</strong> DIVIDE returns blank (not an error) when the denominator is zero, preventing error propagation through your report.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>CALCULATE(expression, filters...) evaluates the expression in a modified filter context.</li>
+<li>ALL() inside CALCULATE removes filters — use it to compute totals and percentages.</li>
+<li>CALCULATE is how you implement Tableau's FIXED LODs and TOTAL() table calculations in Power BI.</li>
+</ul>`,
+  "4-4": `<h2>The translation guide: Tableau calculations → DAX</h2>
+<p>You already know what you want to calculate. Here's how common Tableau patterns map to DAX.</p>
+<h2>IF / ELSEIF</h2>
+<div class="callout-green">
+<strong>Tableau:</strong> <code>IF [Sales] &gt; 1000 THEN "High" ELSEIF [Sales] &gt; 500 THEN "Mid" ELSE "Low" END</code><br><br>
+<strong>DAX with nested IF:</strong><br>
+<pre><code>Sales Tier = 
+IF(Sales[Revenue] &gt; 1000, "High",
+    IF(Sales[Revenue] &gt; 500, "Mid", "Low"))</code></pre>
+<strong>DAX with SWITCH (cleaner for multiple branches):</strong><br>
+<pre><code>Sales Tier = 
+SWITCH(TRUE(),
+    Sales[Revenue] &gt; 1000, "High",
+    Sales[Revenue] &gt; 500,  "Mid",
+    "Low")</code></pre>
+</div>
+<h2>Fixed LODs</h2>
+<div class="callout-green">
+<strong>Tableau:</strong> <code>{FIXED [Customer ID] : SUM([Sales])}</code><br><br>
+<strong>DAX equivalent:</strong><br>
+<pre><code>Customer Total Sales = 
+CALCULATE(
+    SUM(Sales[Revenue]),
+    ALLEXCEPT(Sales, Sales[CustomerID])
+)</code></pre>
+</div>
+<h2>Running Total</h2>
+<div class="callout-green">
+<strong>Tableau:</strong> RUNNING_SUM(SUM([Sales])) table calculation<br><br>
+<strong>DAX:</strong><br>
+<pre><code>Running Total Sales = 
+CALCULATE(
+    SUM(Sales[Revenue]),
+    FILTER(
+        ALL(Date[Date]),
+        Date[Date] &lt;= MAX(Date[Date])
+    )
+)</code></pre>
+</div>
+<h2>COUNTD (distinct count)</h2>
+<div class="callout-green">
+<strong>Tableau:</strong> <code>COUNTD([Customer ID])</code><br><br>
+<strong>DAX:</strong> <code>Unique Customers = DISTINCTCOUNT(Sales[CustomerID])</code>
+</div>
+<h2>Rank</h2>
+<div class="callout-green">
+<strong>Tableau:</strong> RANK(SUM([Sales])) table calculation<br><br>
+<strong>DAX:</strong><br>
+<pre><code>Sales Rank = RANKX(ALL(Products[ProductName]), [Total Sales])</code></pre>
+</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>SWITCH(TRUE(), ...) is the clean DAX equivalent of Tableau's multi-branch IF/ELSEIF.</li>
+<li>Fixed LODs translate to CALCULATE + ALLEXCEPT — same concept, different syntax.</li>
+<li>Running totals use FILTER + ALL on a Date column — more verbose than Tableau table calcs but fully explicit.</li>
+</ul>`,
+  "4-5": `<h2>Time intelligence in Power BI</h2>
+<p>Time intelligence functions are among the most-used DAX functions in real reports. They let you compare periods, compute YTD totals, and calculate period-over-period changes. The prerequisite: a proper Date table (lesson 3-6) marked as a Date Table.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Tableau handles date comparisons with DATEADD/DATEDIFF in calculated fields, or with LOOKUP() table calculations. DAX time intelligence functions are more concise for common patterns but require the Date table setup.</div>
+<h2>Year-over-year comparison</h2>
+<pre><code>// Current period
+Total Sales = SUM(Sales[Revenue])
+
+// Same period last year — automatically shifts back 12 months
+Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Date[Date]))
+
+// YoY change amount
+Sales YoY = [Total Sales] - [Sales LY]
+
+// YoY % change
+Sales YoY % = DIVIDE([Sales YoY], [Sales LY])</code></pre>
+<h2>Year-to-date</h2>
+<pre><code>Sales YTD = TOTALYTD([Total Sales], Date[Date])
+
+// For a fiscal year ending June 30
+Sales FYTD = TOTALYTD([Total Sales], Date[Date], "06/30")</code></pre>
+<h2>Rolling periods with DATEADD</h2>
+<pre><code>// Previous month
+Sales PM = CALCULATE([Total Sales], DATEADD(Date[Date], -1, MONTH))
+
+// 3 months ago
+Sales 3M = CALCULATE([Total Sales], DATEADD(Date[Date], -3, MONTH))
+
+// Previous quarter
+Sales PQ = CALCULATE([Total Sales], DATEADD(Date[Date], -1, QUARTER))</code></pre>
+<h2>Month-to-date and Quarter-to-date</h2>
+<pre><code>Sales MTD = TOTALMTD([Total Sales], Date[Date])
+Sales QTD = TOTALQTD([Total Sales], Date[Date])</code></pre>
+<div class="callout"><strong>Time intelligence requires contiguous date ranges.</strong> If your Date table has gaps, or users select non-contiguous dates in a slicer, results will be wrong. Use a relative date filter or continuous date slicer to ensure a clean date range.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>SAMEPERIODLASTYEAR is the go-to for YoY — it shifts the current date context back 12 months automatically.</li>
+<li>TOTALYTD, TOTALMTD, TOTALQTD handle cumulative calculations without manual running total logic.</li>
+<li>DATEADD is your flexible "offset by N periods" function — equivalent to Tableau's DATEADD().</li>
+</ul>`,
+  "4-6": `<h2>Ranking in Power BI vs Tableau</h2>
+<p>In Tableau, ranking is a table calculation — RANK() runs after the query, over the result set. In Power BI, ranking is done with RANKX(), a DAX function that ranks values within a specified table of values.</p>
+<div class="callout-green"><strong>Tableau RANK() → RANKX():</strong><br>
+Tableau: Drop Rank() table calc, pick compute-using dimension.<br>
+Power BI: Write a RANKX measure that defines both the table to rank over and the expression to rank by.</div>
+<h2>Basic RANKX</h2>
+<pre><code>// Rank products by Total Sales — 1 = highest
+Product Sales Rank = 
+RANKX(
+    ALL(Products[ProductName]),  ← table to rank across
+    [Total Sales],               ← expression to rank by
+    ,                            ← value (blank = uses expression)
+    DESC,                        ← DESC: highest gets rank 1
+    DENSE                        ← DENSE: no gaps in rank numbers
+)</code></pre>
+<p>When this measure is placed in a table visual with ProductName on rows, each row shows that product's rank among all products — regardless of what's filtered in slicers (because ALL() overrides filters).</p>
+<h2>Top N filtering with TOPN</h2>
+<pre><code>// Sales from only the top 5 products
+Top 5 Products Sales = 
+CALCULATE(
+    [Total Sales],
+    TOPN(5, ALL(Products[ProductName]), [Total Sales])
+)</code></pre>
+<h2>Dynamic Top N with a What-If Parameter</h2>
+<pre><code>// 1. Create a What-If Parameter called "Top N" (Modeling → New Parameter, integer 1-20)
+// 2. Use it in TOPN:
+Top N Sales = 
+CALCULATE(
+    [Total Sales],
+    TOPN([Top N Value], ALL(Products[ProductName]), [Total Sales])
+)</code></pre>
+<div class="callout-green"><strong>Tableau Set Action equivalent:</strong> This is like a Top N Set in Tableau controlled by a parameter. In Power BI, use a What-If Parameter (Modeling → New Parameter) to create the user-controlled N value.</div>
+<div class="callout"><strong>RANKX performance tip:</strong> Rank over dimension tables (Products, Customers with thousands of rows), not fact tables with millions of rows. RANKX evaluates the expression for every row in the ranking table — this can be slow on large tables.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>RANKX ranks a measure across a specified table — define both the table and the expression to rank by.</li>
+<li>Use ALL() inside RANKX so the rank isn't affected by what's currently filtered in the visual.</li>
+<li>TOPN inside CALCULATE filters to the top N rows — combine with a What-If Parameter for a dynamic Top N control.</li>
+</ul>`,
+  "4-7": `<h2>The problem with nested DAX</h2>
+<p>Complex DAX measures can quickly become unreadable:</p>
+<pre><code>// Hard to read — what does the denominator represent?
+Gross Margin % = 
+DIVIDE(
+    CALCULATE(SUM(Sales[Revenue]) - SUM(Sales[COGS]), ALL(Sales[Discount])),
+    CALCULATE(SUM(Sales[Revenue]), ALL(Sales[Discount]))
+)</code></pre>
+<p>Variables solve this. They let you break a complex expression into named, readable steps — like writing a formula with intermediate cells in Excel, or breaking a Tableau LOD calculation into multiple steps.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> There's no direct equivalent in Tableau calculated fields — Tableau doesn't support variable assignment. VAR/RETURN is a DAX-specific feature that makes complex measures readable and maintainable in a way Tableau calculated fields can't match.</div>
+<h2>The VAR / RETURN pattern</h2>
+<pre><code>Gross Margin % = 
+VAR Revenue    = CALCULATE(SUM(Sales[Revenue]), ALL(Sales[Discount]))
+VAR COGS       = CALCULATE(SUM(Sales[COGS]),    ALL(Sales[Discount]))
+VAR GrossProfit = Revenue - COGS
+RETURN
+    DIVIDE(GrossProfit, Revenue)</code></pre>
+<p>Each VAR stores an intermediate result. RETURN is always last — it's the value the measure outputs. Variables are evaluated once and reused, making this more efficient than referencing the same CALCULATE expression multiple times.</p>
+<h2>Variables for debugging</h2>
+<p>Temporarily change RETURN to output an intermediate variable to check what it's computing:</p>
+<pre><code>Gross Margin % = 
+VAR Revenue     = CALCULATE(SUM(Sales[Revenue]), ALL(Sales[Discount]))
+VAR COGS        = CALCULATE(SUM(Sales[COGS]),    ALL(Sales[Discount]))
+VAR GrossProfit = Revenue - COGS
+RETURN
+    GrossProfit  ← temporarily return this to verify the intermediate value</code></pre>
+<div class="callout"><strong>Name your variables descriptively.</strong> <code>VAR x = ...</code> tells you nothing. <code>VAR TotalRevenueExDiscount = ...</code> is self-documenting. Treat DAX variable names like good variable names in code — they're part of your documentation.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>VAR stores intermediate values; RETURN outputs the final result — every measure with VAR must end with RETURN.</li>
+<li>Variables make complex measures readable and are more performant than repeating the same CALCULATE call.</li>
+<li>Use variables as a debugging technique — temporarily return a VAR to see its value directly in a visual.</li>
+</ul>`,
+  "4-8": `<h2>Why you need DAX Studio</h2>
+<p>When a DAX measure returns the wrong number, Power BI Desktop doesn't give you much help. DAX Studio is a free, open-source tool that connects to your Power BI model, lets you run DAX queries directly against it, and shows you exactly what the engine is computing and how fast.</p>
+<p>Download it free at <strong>daxstudio.org</strong> — install it alongside Power BI Desktop.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is like Tableau's performance recorder plus the ability to run custom queries against your data. There's no exact Tableau equivalent — DAX Studio gives you a level of model introspection that Tableau Desktop simply doesn't provide.</div>
+<h2>Connecting to your model</h2>
+<ol>
+<li>Open your .pbix file in Power BI Desktop</li>
+<li>Open DAX Studio</li>
+<li>Select "PBI / SSDT Model" — it auto-detects your open Desktop file</li>
+<li>Click Connect</li>
+</ol>
+<h2>Running a DAX query to test measures</h2>
+<pre><code>EVALUATE
+SUMMARIZECOLUMNS(
+    Products[Category],
+    "Total Sales", [Total Sales],
+    "Sales LY",    [Sales LY]
+)</code></pre>
+<p>This returns a table showing both measures for each product category — isolating your measures from any visual's filter context. This is the fastest way to verify a measure returns expected values.</p>
+<h2>Server Timings — finding slow measures</h2>
+<p>Enable Server Timings (Query tab → Server Timings), then run your query. You'll see the breakdown between Storage Engine queries (fast columnar scans) and Formula Engine queries (slower, row-by-row). If your measure spends most time in the Formula Engine, that's a sign it can be optimized — often by replacing iterators with direct aggregation functions.</p>
+<h2>View Metrics — find bloated columns</h2>
+<p>Advanced → View Metrics shows the compressed size of every column in your model. Use this to find bloated calculated columns that are inflating your file size unnecessarily — often these can be replaced with measures instead.</p>
+<div class="callout"><strong>Most common debugging workflow:</strong> Measure returns wrong number → DAX Studio → EVALUATE with SUMMARIZECOLUMNS → change filter arguments to simulate different slicer states → find the condition where it breaks.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>DAX Studio is free and essential — install it alongside Power BI Desktop from daxstudio.org.</li>
+<li>Use EVALUATE + SUMMARIZECOLUMNS to test measures outside any visual's filter context.</li>
+<li>Server Timings reveals where a slow measure spends its time — Formula Engine time is the target to reduce.</li>
+</ul>`,
+  "5-1": `<h2>Where fields go in Power BI visuals</h2>
+<p>In Tableau, you drag fields to Rows, Columns, Color, Size, Detail, Tooltip shelves. Power BI has a parallel system with different terminology. Every visual type has a set of <strong>field wells</strong> in the Visualizations pane on the right.</p>
+<div class="callout-green"><strong>Tableau shelf → Power BI field well:</strong><br>
+Tableau Columns shelf → PBI Axis (X-axis)<br>
+Tableau Rows shelf → PBI Values (Y-axis measure)<br>
+Tableau Color shelf → PBI Legend<br>
+Tableau Tooltip shelf → PBI Tooltips<br>
+Tableau Filters shelf → PBI Filters pane</div>
+<h2>Common field wells by visual type</h2>
+<p><strong>Bar/Column chart:</strong></p>
+<ul>
+<li><strong>Axis</strong> — the category dimension (e.g., Product Category)</li>
+<li><strong>Values</strong> — the measure to plot (e.g., Total Sales)</li>
+<li><strong>Legend</strong> — optional grouping/color dimension (e.g., Region)</li>
+<li><strong>Small multiples</strong> — creates a grid of charts (like Tableau's Pages shelf)</li>
+<li><strong>Tooltips</strong> — additional measures shown on hover</li>
+</ul>
+<p><strong>Matrix (crosstab/pivot):</strong></p>
+<ul>
+<li><strong>Rows</strong> — row dimensions</li>
+<li><strong>Columns</strong> — column dimensions</li>
+<li><strong>Values</strong> — measures shown in cells</li>
+</ul>
+<h2>The Filters pane</h2>
+<p>The Filters pane (third tab on the right panel) has three levels:</p>
+<ol>
+<li><strong>Filters on this visual</strong> — applies only to the currently selected visual</li>
+<li><strong>Filters on this page</strong> — applies to all visuals on the current report page</li>
+<li><strong>Filters on all pages</strong> — applies everywhere in the entire report</li>
+</ol>
+<div class="callout"><strong>The Filters pane is always visible to report viewers in the Service.</strong> If you want filters that viewers can't see or change, use row-level security or mark the filter as non-interactive in the format options — don't assume the Filters pane is hidden.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Field wells replace Tableau's shelves — Axis = Columns shelf, Values = Rows shelf, Legend = Color shelf.</li>
+<li>The Filters pane has three scopes: visual, page, and all pages — use them intentionally.</li>
+<li>Drag into specific wells in the Visualizations pane for precise control over where a field lands.</li>
+</ul>`,
+  "5-2": `<h2>Two ways to filter, very different behavior</h2>
+<p>Power BI splits filtering into two explicit mechanisms: <strong>Slicers</strong> (visible UI controls on the canvas) and the <strong>Filters pane</strong> (off-canvas, hidden by default).</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong><br>
+Tableau Quick Filter (shown on dashboard) → Power BI Slicer<br>
+Tableau Filters shelf (hidden, applies to data) → Power BI Filters pane</div>
+<h2>Slicers</h2>
+<p>A slicer is a visual — it lives on the canvas, takes up space, and users interact with it to filter other visuals. By default, a slicer filters all visuals on the same page. To add one: select the Slicer visualization type, drag a field into its Field well.</p>
+<p>Common slicer styles (set in Format pane → Slicer settings):</p>
+<ul>
+<li><strong>List</strong> — checkboxes for each value (default for text)</li>
+<li><strong>Dropdown</strong> — compact; good when space is limited</li>
+<li><strong>Between / Before / After</strong> — for date or numeric ranges</li>
+<li><strong>Relative date</strong> — "Last 7 days," "This month" — very useful for date filtering</li>
+</ul>
+<h2>Filters pane</h2>
+<p>Filters in the Filters pane are not visible on the canvas. Use them for filters you want applied but not exposed as UI controls — removing nulls, filtering to a specific region for a page, setting report-wide exclusions.</p>
+<h2>Controlling what a slicer affects</h2>
+<p>To make a slicer not affect a specific visual:</p>
+<ol>
+<li>Select the visual you want to exclude</li>
+<li>Format → Edit Interactions</li>
+<li>A filter icon appears above each other visual — click the "none" (circle with slash) icon above the slicer</li>
+</ol>
+<div class="callout"><strong>Slicer sync across pages:</strong> By default, slicers don't carry their selection to other pages. To sync a slicer across pages, use View → Sync Slicers — this is Power BI's equivalent of a Tableau global filter.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Slicers are on-canvas UI controls; Filters pane is off-canvas and hidden from view.</li>
+<li>Use Edit Interactions to control which visuals a slicer affects — it doesn't have to affect everything.</li>
+<li>Sync Slicers (View menu) carries a slicer's selection across multiple report pages.</li>
+</ul>`,
+  "5-3": `<h2>The behavior that surprises every Tableau user</h2>
+<p>In Tableau, clicking a mark doesn't automatically filter other charts — you set up filter actions explicitly. In Power BI, clicking a visual element <strong>immediately affects all other visuals on the page by default</strong>. No setup required. This is one of the most noticeable differences when you first use Power BI.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is like having a filter action automatically configured on every sheet, targeting every other sheet on the dashboard — except Power BI's default behavior is cross-highlighting rather than full filtering.</div>
+<h2>Cross-highlighting vs Cross-filtering</h2>
+<p><strong>Cross-highlighting (the default):</strong> Clicking "Electronics" in a bar chart dims other categories in all visuals without removing them. The full bar is still visible, but the highlighted portion shows the Electronics contribution. This preserves context while showing the selection.</p>
+<p><strong>Cross-filtering:</strong> Other visuals completely filter to show only the selected items — unselected rows disappear entirely. This is more like Tableau's filter action behavior.</p>
+<h2>Changing the interaction type</h2>
+<p>Select a visual, then go to Format → Edit Interactions. Small icons appear above each other visual on the page:</p>
+<ul>
+<li><strong>Funnel icon</strong> — clicking the source fully filters this visual (cross-filter)</li>
+<li><strong>Bar chart icon</strong> — clicking the source cross-highlights this visual</li>
+<li><strong>Circle-slash icon</strong> — this visual is not affected by the source at all</li>
+</ul>
+<p>Click Edit Interactions again (or click elsewhere) to exit the mode.</p>
+<div class="callout"><strong>Cross-highlighting can confuse users.</strong> When a bar chart is cross-highlighted, the bar shows two values: the full (background) value and the highlighted (foreground) value. Users unfamiliar with Power BI may think the highlighted portion IS the total. For high-stakes charts, switch to cross-filter mode instead.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Power BI cross-highlights by default when you click any visual element — this is automatic, unlike Tableau.</li>
+<li>Cross-highlighting shows proportion; cross-filtering removes unselected data entirely.</li>
+<li>Use Format → Edit Interactions to control which visuals are affected and what type of interaction applies.</li>
+</ul>`,
+  "5-4": `<h2>Conditional formatting in Power BI</h2>
+<p>Conditional formatting in Power BI is applied per visual, per field. You access it by selecting a visual and going to the Format pane — look for "Cell elements" in tables/matrices, or "Data colors" in charts.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Tableau's conditional formatting is mainly through the Color shelf (set color based on a measure or dimension). Power BI's approach is more powerful — you can independently set background color, font color, data bars, and icons on separate columns in the same table visual.</div>
+<h2>Color scales (gradient)</h2>
+<p>For numeric measures, set colors to gradient between two or three colors based on value range. In a matrix, this creates a heat-map effect. Format → Cell elements → Background color → toggle on → Format by: Gradient.</p>
+<h2>Rules-based formatting</h2>
+<p>Set specific colors for specific value ranges. Useful for RAG status (Red/Amber/Green):</p>
+<ul>
+<li>Format by: Rules</li>
+<li>Rule: if value is less than 0.8, color = Red; if 0.8 to 1.0, color = Amber; if greater than 1.0, color = Green</li>
+</ul>
+<h2>Icons (KPI symbols)</h2>
+<p>Add conditional icons (arrows, checkmarks, warning symbols) to matrix cells. Format → Cell elements → Icons → toggle on → configure icon rules per value threshold. Great for executive KPI dashboards.</p>
+<h2>Field value formatting (DAX-driven) — the most powerful option</h2>
+<p>Set the color using a DAX measure that returns a color string:</p>
+<pre><code>// Create a measure that returns a hex color
+Sales Color = 
+IF([Total Sales] &gt;= [Sales Target], "#3DBF6E", "#E24B4A")</code></pre>
+<p>Then: Format → Cell elements → Background color → Format by: Field value → select your color measure. Now color is fully dynamic and responds to filter context — any logic you can write in DAX can drive formatting.</p>
+<div class="callout"><strong>DAX-driven formatting far exceeds Tableau's conditional formatting.</strong> You can compare against targets, use SWITCH for complex logic, or look up colors from a config table. This level of dynamic formatting isn't possible in Tableau without significant workarounds.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Apply conditional formatting per visual in the Format pane — "Cell elements" for tables, "Data colors" for charts.</li>
+<li>Three modes: gradient (smooth scale), rules (range-based color), field value (DAX measure returns the color).</li>
+<li>The DAX field value approach is most powerful — write any logic in DAX and have it drive color, icons, or data bars.</li>
+</ul>`,
+  "5-5": `<h2>Three navigation concepts in Power BI</h2>
+<p>Power BI separates three concepts that Tableau sometimes blurs: drill-down (going deeper in a hierarchy within a visual), drill-through (navigating to a separate detail page), and page navigation (explicit buttons to move between report pages).</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong><br>
+Drill-down → Tableau's hierarchy drilling (same concept, different UI)<br>
+Drill-through → Tableau's dashboard filter actions navigating to a detail sheet<br>
+Page navigation → Tableau's dashboard navigation buttons</div>
+<h2>Drill-down (within a visual)</h2>
+<p>When you add a hierarchy to a visual's Axis (e.g., Year → Quarter → Month), small drill icons appear at the top of the visual. Enable drill mode (click the forked arrow icon), then click a bar to drill into just that item. To create a hierarchy: in the Fields pane, drag one field onto another — Power BI creates a drillable hierarchy.</p>
+<h2>Drill-through (cross-page navigation)</h2>
+<p>Drill-through lets users right-click a data point and navigate to a detail page pre-filtered to that item. Setup on the destination page:</p>
+<ol>
+<li>Create a new report page (the detail page)</li>
+<li>In the Visualizations pane → Drill through section, drag the field you want to drill by (e.g., ProductName)</li>
+<li>Build your detail visuals — they automatically filter to the drilled item</li>
+<li>Power BI automatically adds a Back button</li>
+</ol>
+<p>Now users can right-click any product name in the report → "Drill through → [your page name]."</p>
+<h2>Page navigation buttons</h2>
+<p>Insert → Buttons → Navigator → Page Navigator automatically creates a button bar for all pages. Or use Insert → Buttons → Blank and set Format → Action → Type = Page Navigation to build custom navigation.</p>
+<div class="callout"><strong>Use drill-through for detail records, page navigation for major sections.</strong> Don't put everything on one page. Use page navigation for major sections (Summary, Regional, Product Analysis), drill-through for individual record detail pages.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Drill-down explores a hierarchy within a visual; drill-through jumps to a separate detail page filtered to a selected item.</li>
+<li>Set up drill-through on the destination page by dragging a field to the Drill through section in the Visualizations pane.</li>
+<li>Insert → Buttons → Page Navigator creates a quick auto-generated navigation bar across all report pages.</li>
+</ul>`,
+  "5-6": `<h2>What bookmarks are</h2>
+<p>A bookmark captures the current state of a report page — which filters are applied, which visuals are visible, what's selected in slicers — and saves it as a named snapshot you can return to via a button click.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Tableau doesn't have a direct equivalent, but this is similar to combining custom views (saved filter states) with show/hide container behavior. Power BI's bookmarks are more flexible and easier to implement than Tableau's show/hide workarounds.</div>
+<h2>The Selection pane</h2>
+<p>View → Selection opens a panel listing every object on the current page. You can rename any object, toggle visibility (eye icon), and reorder the layer stack. Renaming objects is important — "Image 3" tells you nothing; "Toggle Chart Button" does.</p>
+<h2>Building a Chart/Table toggle with bookmarks</h2>
+<p>Classic pattern — show a chart OR a table, toggled by buttons:</p>
+<ol>
+<li>Create your bar chart and a table showing the same data — position them overlapping</li>
+<li>In the Selection pane, hide the table (click its eye icon)</li>
+<li>View → Bookmarks → Add. Name it "Chart view." This captures: chart visible, table hidden.</li>
+<li>Now hide the chart, show the table in the Selection pane</li>
+<li>Add another bookmark: "Table view."</li>
+<li>Add two buttons (Insert → Buttons → Blank). Label them "Chart" and "Table."</li>
+<li>For each button: Format → Action → Type = Bookmark → select the corresponding bookmark</li>
+</ol>
+<p>Now clicking "Table" shows the table and hides the chart. Clicking "Chart" reverses it.</p>
+<div class="callout"><strong>Bookmark scope matters.</strong> By default, bookmarks capture ALL page state — slicer selections, filter context, everything. If you only want to toggle visibility (not reset slicers), click the bookmark's three dots → Edit → uncheck "Data." Otherwise, clicking the bookmark resets slicer selections — which is almost never what you want.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Bookmarks save page state as named snapshots — trigger them via button Format → Action → Bookmark.</li>
+<li>The Selection pane controls object visibility and layer order — essential for show/hide bookmark patterns.</li>
+<li>Uncheck "Data" in bookmark options if you only want to toggle visibility without resetting slicer states.</li>
+</ul>`,
+  "5-7": `<h2>How Power BI themes work</h2>
+<p>A Power BI theme is a JSON file that defines the default colors, fonts, and visual formatting for an entire report. Apply one theme and every visual updates to match — new visuals you add will also inherit the theme defaults automatically.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Similar to Tableau's Workbook Formatting (Format → Workbook) plus color palettes, but Power BI themes go deeper — they control visual-level formatting defaults, not just sheet-level colors. You can't export/share a Tableau workbook format as a standalone file; Power BI theme JSON files are shareable and reusable across the org.</div>
+<h2>Applying a built-in theme</h2>
+<p>View → Themes → browse ~30 built-in options. Click any to apply instantly. For internal reports, picking a professional built-in theme and moving on is perfectly fine.</p>
+<h2>Customizing a theme</h2>
+<p>View → Themes → Customize current theme gives a UI for basic changes (colors, text, page). For deeper control, export the JSON (View → Themes → Save current theme) and edit it directly in a text editor.</p>
+<h2>The theme JSON structure</h2>
+<pre><code>{
+  "name": "My Company Theme",
+  "dataColors": ["#003366", "#0066CC", "#99CCFF", "#FF6600"],
+  "background": "#FFFFFF",
+  "foreground": "#333333",
+  "tableAccent": "#0066CC",
+  "textClasses": {
+    "title": { "fontFace": "Segoe UI", "fontSize": 16, "fontColor": "#003366" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 11 }
+  }
+}</code></pre>
+<p>The <code>dataColors</code> array defines the palette order — first color for first series, second for second, etc.</p>
+<div class="callout"><strong>Themes set defaults, not overrides.</strong> If you've manually set a visual's color (changed a bar to red), the theme won't overwrite that manual setting. Only visuals using automatic/default formatting pick up theme changes. Apply your theme first, then do manual fine-tuning — never the other way around.</div>
+<h2>Sharing themes across your team</h2>
+<p>Once you have a theme JSON, anyone applies it in seconds: View → Themes → Browse for themes → select the file. This is how orgs maintain consistent branding — share the JSON, not screenshots of settings.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Themes are JSON files applied via View → Themes — they set default formatting for the entire report.</li>
+<li>Apply your theme first before any manual formatting, or manual overrides will block theme changes from taking effect.</li>
+<li>Export the theme JSON and share it with your team for consistent branding across all Power BI reports.</li>
+</ul>`,
+  "6-1": `<h2>Publishing from Desktop to the Service</h2>
+<p>When your report is ready, click <strong>Home → Publish</strong> in Power BI Desktop. Sign in to your Power BI account if prompted, then choose a destination workspace. Hit Select and the upload begins.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is the same as Tableau Desktop's Server → Publish Workbook. You're pushing your local file to the cloud service where others can access it.</div>
+<h2>What gets published — two separate objects</h2>
+<p>Publishing a .pbix file creates two distinct objects in the Service:</p>
+<ul>
+<li><strong>Dataset</strong> — your data model: all tables, relationships, and DAX measures. This is the "engine."</li>
+<li><strong>Report</strong> — your report pages with all the visuals. This is the "presentation layer."</li>
+</ul>
+<p>These are separate objects. Multiple reports can connect to the same dataset. This is a key Power BI pattern: one shared dataset, many reports built on top of it — so metric definitions are consistent across all reports.</p>
+<div class="callout"><strong>What does NOT get published:</strong> Data source credentials. After publishing, you must configure credentials in the Service (Dataset → Settings → Data source credentials). Also, local file paths like "C:\\data\\sales.xlsx" won't refresh in the cloud — you need a gateway or a cloud-accessible source for scheduled refresh.</div>
+<h2>Republishing (updating existing reports)</h2>
+<p>After making changes in Desktop, click Publish again. Power BI asks if you want to replace the existing dataset and report — click Replace. Your changes go live.</p>
+<p>Important: if anyone has made edits to the report in the Service (editing in the browser), republishing from Desktop overwrites those changes. The Desktop version always wins.</p>
+<h2>Verifying after publishing</h2>
+<p>Go to app.powerbi.com → find your workspace → click the report. If you see a credentials error, go to the dataset's three-dot menu → Settings → Data source credentials and enter them.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Home → Publish sends your .pbix to the Service, creating both a Dataset and a Report as separate objects.</li>
+<li>Configure data source credentials in the Service after publishing — this is a separate step from Desktop.</li>
+<li>Local file paths won't refresh in the Service — use cloud sources or a gateway for scheduled refresh to work.</li>
+</ul>`,
+  "6-2": `<h2>What a workspace is</h2>
+<p>A workspace in the Power BI Service is a container for datasets, reports, and dashboards. It's where team collaboration happens — you invite colleagues and assign them roles with different levels of access.</p>
+<div class="callout-green"><strong>Tableau Server equivalent:</strong> A workspace is similar to a Tableau Server Site or Project — an organizational container with permission management. Unlike Tableau's nested project structure, Power BI workspaces are flat (no sub-workspaces, though you can organize content within a workspace using folders).</div>
+<h2>My Workspace</h2>
+<p>Every user has a private "My Workspace." Content here is only visible to you. Publish here while developing and testing; move to a shared workspace when ready to collaborate or share with others.</p>
+<h2>Shared workspaces and roles</h2>
+<table><thead><tr><th>Role</th><th>What they can do</th></tr></thead>
+<tbody>
+<tr><td><strong>Admin</strong></td><td>Everything, including managing members and deleting the workspace</td></tr>
+<tr><td><strong>Member</strong></td><td>Add/remove content, publish reports, manage datasets</td></tr>
+<tr><td><strong>Contributor</strong></td><td>Publish and edit content, but can't manage workspace members</td></tr>
+<tr><td><strong>Viewer</strong></td><td>View content only — can't edit or publish anything</td></tr>
+</tbody></table>
+<h2>Apps: packaging workspaces for distribution</h2>
+<p>A workspace App is a curated, published version of a workspace's content. When you create an App, you choose which reports and dashboards to include and design the navigation menu. End users get a clean, app-like experience.</p>
+<div class="callout"><strong>Key difference between workspace access and an App:</strong> Workspace members can see all content including drafts and unpublished reports. An App only shows the content you intentionally include. Use Apps for final, polished content delivered to end users; use workspace sharing for active team collaboration.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>My Workspace is private; shared workspaces are for team collaboration with role-based permissions.</li>
+<li>Four workspace roles: Admin, Member, Contributor, Viewer — assign the minimum role people actually need.</li>
+<li>Publish an App from a workspace to give end users a curated, polished experience separate from the development workspace.</li>
+</ul>`,
+  "6-3": `<h2>Power BI has two different things called "Dashboard"</h2>
+<p>This trips up almost everyone coming from Tableau. In Power BI, a <strong>Report</strong> and a <strong>Dashboard</strong> are two separate, distinct objects with different purposes. In everyday speech, "dashboard" means a collection of charts — in Power BI, that's actually a <em>Report</em>.</p>
+<div class="callout-green"><strong>Tableau mapping:</strong><br>
+Power BI Report = Tableau Dashboard (multi-sheet canvas with interactive visuals)<br>
+Power BI Dashboard = something Tableau doesn't have — a pinned tile monitoring board</div>
+<h2>Reports</h2>
+<p>A Report is what you build in Desktop — multiple pages, interactive visuals, slicers, drill-through. This is the interactive analytics experience.</p>
+<ul>
+<li>Multi-page with full navigation</li>
+<li>Full interactivity: cross-filtering, drill-through, slicers, bookmarks</li>
+<li>Built in Desktop, viewed in Service</li>
+<li>Connected to one dataset</li>
+</ul>
+<h2>Dashboards (in the Service only)</h2>
+<p>A Dashboard in the Power BI Service is a single-page canvas where you <strong>pin tiles</strong> from reports. It's for high-level monitoring, not exploration. Think of it as a "favorites board" for your most important KPIs.</p>
+<ul>
+<li>Single page only — no multi-page navigation</li>
+<li>No filter pane, no slicers, no drill-through</li>
+<li>Tiles are static snapshots that auto-refresh on a schedule</li>
+<li>Can mix tiles from multiple different reports and datasets</li>
+<li>Clicking a tile navigates to the underlying Report for actual analysis</li>
+</ul>
+<p>To pin a tile: open a report in the Service → hover over any visual → click the pin icon → pin to an existing or new Dashboard.</p>
+<div class="callout"><strong>Dashboards are for monitoring; Reports are for analysis.</strong> An exec wants to glance at today's key numbers — Dashboard. An analyst wants to explore, filter, and drill down — Report. Don't try to build your primary analytics experience on a Dashboard; that's what Reports are for.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>Report = interactive multi-page canvas (built in Desktop). This is what Tableau calls a Dashboard.</li>
+<li>Dashboard = pinned tile monitoring board in the Service. No interactivity beyond clicking through to the source Report.</li>
+<li>Build analytics in Reports; use Dashboards for executive KPI monitoring only.</li>
+</ul>`,
+  "6-4": `<h2>What Row-Level Security does</h2>
+<p>Row-Level Security (RLS) restricts which data rows a user can see in a report based on their identity. A West sales rep sees only West data; a national manager sees everything. Same report, same dataset — different data based on who's logged in.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Same as Tableau's User Filters or USERNAME()/ISMEMBEROF() functions combined with Tableau Server user attribute filters. Power BI's implementation is comparable — it also uses the logged-in user's email to filter data, though the setup is slightly different.</div>
+<h2>Static RLS</h2>
+<p>Static RLS hardcodes rules for specific roles. You define a DAX filter that's applied whenever a member of a role views a report.</p>
+<p>Setup in Desktop (Modeling → Manage Roles):</p>
+<ol>
+<li>Click "New Role" → name it (e.g., "West Region")</li>
+<li>Select a table (e.g., Sales or a Region mapping table)</li>
+<li>Enter a DAX filter: <code>[Region] = "West"</code></li>
+<li>Save the role</li>
+</ol>
+<p>Then in the Service: Dataset → Security → assign users or groups to the "West Region" role.</p>
+<h2>Dynamic RLS</h2>
+<p>Dynamic RLS uses the logged-in user's identity to filter data automatically — no per-user role maintenance required. The standard pattern:</p>
+<pre><code>// Filter on a user mapping table:
+[UserEmail] = USERPRINCIPALNAME()</code></pre>
+<p>USERPRINCIPALNAME() returns the email of the currently logged-in user. Your model needs a table mapping email addresses to data scope (regions, territories). The RLS filter on that table propagates through model relationships to restrict fact data automatically.</p>
+<div class="callout"><strong>Dynamic RLS requires a user mapping table in your model.</strong> You need a table mapping email addresses to their allowed data scope, with a relationship to your dimension tables. The filter propagates from there. This scales to any number of users without creating individual roles.</div>
+<h2>Testing RLS before publishing</h2>
+<p>Modeling → View As → select a role and optionally enter a test email → your report now shows exactly what that role/user would see. Always test before publishing.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Static RLS: define roles with hardcoded DAX filters, assign users to roles in the Service.</li>
+<li>Dynamic RLS: use USERPRINCIPALNAME() in a filter on a user mapping table — scales to any number of users.</li>
+<li>Use Modeling → View As to test how RLS looks for specific roles or users before publishing to the Service.</li>
+</ul>`,
+  "6-5": `<h2>Setting up scheduled refresh</h2>
+<p>After publishing a dataset, you can configure it to refresh automatically. In the Service: workspace → three dots on the dataset → Settings → Scheduled refresh.</p>
+<p>Prerequisites before you can configure refresh:</p>
+<ul>
+<li>Your data source must be cloud-accessible (or you need the On-Premises Gateway for local sources)</li>
+<li>Data source credentials must be configured (Settings → Data source credentials)</li>
+<li>A Pro or Premium license</li>
+</ul>
+<div class="callout-green"><strong>Tableau equivalent:</strong> This is the same as setting a Tableau Server extract refresh schedule. The configuration UI is different but the concept is identical — define a time and frequency, the service handles the rest.</div>
+<h2>Refresh limits by license tier</h2>
+<table><thead><tr><th>License</th><th>Max refreshes per day</th></tr></thead>
+<tbody>
+<tr><td>Power BI Pro</td><td>8 per day</td></tr>
+<tr><td>Premium Per User</td><td>48 per day</td></tr>
+<tr><td>Premium Capacity / Fabric</td><td>48 per day + on-demand API refresh</td></tr>
+</tbody></table>
+<h2>The On-Premises Data Gateway</h2>
+<p>If your data lives behind a corporate firewall (SQL Server, Oracle, SharePoint on-prem), the Service can't reach it directly. Install the <strong>On-Premises Data Gateway</strong> on a Windows machine inside your network. It acts as a secure bridge.</p>
+<p>Installation steps:</p>
+<ol>
+<li>Download from microsoft.com (search "Power BI On-premises data gateway")</li>
+<li>Install on a machine that's always on and can reach your data sources</li>
+<li>Sign in to the gateway with your Power BI account</li>
+<li>In the Service: Settings (gear icon) → Manage gateways → add your data sources</li>
+</ol>
+<div class="callout"><strong>Gateway machine requirements:</strong> Must be on during refresh windows, have network access to your sources, and have sufficient RAM (8GB+ recommended). Many orgs run the gateway on a dedicated VM or server.</div>
+<h2>Set up failure notifications</h2>
+<p>In dataset settings, enable email notifications for refresh failures. Always do this — silent refresh failures mean users are working with stale data and nobody knows.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Configure scheduled refresh in the Service under dataset Settings — not in Desktop.</li>
+<li>On-premises sources require the On-Premises Data Gateway installed on a local machine that's always running.</li>
+<li>Always set up failure email notifications so you know immediately when a refresh breaks.</li>
+</ul>`,
+  "6-6": `<h2>Four ways to share in Power BI</h2>
+<p>Power BI offers multiple sharing mechanisms — choosing the right one matters for security, licensing cost, and user experience.</p>
+<div class="callout-green"><strong>Tableau equivalent:</strong> Tableau Server has views, projects, and sites for sharing. Power BI has more granular options — workspace access, direct links, Apps, and embed codes serve different audiences and security requirements.</div>
+<h2>1. Direct report link sharing</h2>
+<p>In the Service: open a report → Share. You can share with specific people (requires Pro for both parties) or generate a link with access settings:</p>
+<ul>
+<li><strong>People in your org with the link</strong> — anyone in your company can view (requires their own Pro or Premium)</li>
+<li><strong>Specific people</strong> — only named individuals</li>
+<li><strong>Anyone with the link</strong> — truly public (requires Premium, often disabled by admins)</li>
+</ul>
+<h2>2. Workspace access</h2>
+<p>Add users as Viewers to a workspace. They can browse all reports in the workspace. Best for team members who need ongoing access to multiple reports — but they see everything in the workspace, including works in progress.</p>
+<h2>3. Apps</h2>
+<p>Publish a workspace App and share the App link. End users get a curated navigation experience. If your org has Premium Capacity, App viewers don't need individual Pro licenses — the most economical sharing method at scale for large audiences.</p>
+<h2>4. Embed codes</h2>
+<p>File → Publish to Web creates a public iFrame embed code. <strong>Warning: this is truly public — no login required, all report data is visible to anyone with the URL.</strong> Only use for non-sensitive, intentionally public data.</p>
+<div class="callout"><strong>For embedding in internal apps (SharePoint, Teams), use the Embed option — not Publish to Web.</strong> The Embed option respects Power BI security and requires authenticated users. Publish to Web bypasses all security and credentials. Never use Publish to Web for anything confidential.</div>
+<h2>Microsoft Teams integration</h2>
+<p>Add Power BI reports as tabs in Teams channels: Add tab → Power BI → select your report. Team members with access can interact with reports without leaving Teams.</p>
+<h3>Key takeaways</h3>
+<ul>
+<li>Direct links and workspace access require Pro licenses for viewers; Apps on Premium Capacity do not.</li>
+<li>Publish to Web = fully public, no login, no security — never use for sensitive data.</li>
+<li>For internal embedding in SharePoint or Teams, use the Embed option which respects authentication.</li>
+</ul>`,
+  "6-7": `<h2>The PL-300 certification</h2>
+<p>Microsoft's official Power BI certification is the <strong>PL-300: Microsoft Power BI Data Analyst</strong>. It covers everything in this course plus some additional enterprise scenarios. For someone with a Tableau background who's worked through all these lessons, PL-300 is very achievable — you already understand data modeling, visualization design, and analytics concepts deeply.</p>
+<p>Exam at a glance:</p>
+<ul>
+<li>~40-60 questions: multiple choice, case studies, drag-and-drop scenarios</li>
+<li>Passing score: 700/1000</li>
+<li>Duration: 120 minutes</li>
+<li>Cost: ~$165 USD (varies by country)</li>
+<li>Prep time from Tableau background: typically 4-8 weeks of focused study</li>
+</ul>
+<h2>Best free study resources</h2>
+<p><strong>Official:</strong></p>
+<ul>
+<li><strong>Microsoft Learn</strong> (learn.microsoft.com/power-bi) — free, official learning paths covering all PL-300 exam topics. Start here.</li>
+<li><strong>Microsoft Docs</strong> (docs.microsoft.com/power-bi) — the definitive reference for any specific feature or function.</li>
+</ul>
+<p><strong>Community:</strong></p>
+<ul>
+<li><strong>SQLBI.com</strong> — the best DAX resource on the internet. Marco Russo and Alberto Ferrari literally wrote the book on DAX. Their free DAX patterns site and articles are essential reading.</li>
+<li><strong>Power BI Community forums</strong> (community.powerbi.com) — active forums for questions, answers, and ideas.</li>
+<li><strong>Guy in a Cube (YouTube)</strong> — Adam Saxton's channel covers Power BI news, tips, and practical walkthroughs.</li>
+</ul>
+<div class="callout-green"><strong>For Tableau users specifically:</strong> The SQLBI DAX patterns site explains the calculation model differences in a way that resonates with people coming from Tableau's approach. Focus time there on CALCULATE, filter context, and time intelligence patterns — those are where Tableau instincts need the most adjustment.</div>
+<h2>The best way to cement everything</h2>
+<p>Build a real project with data you care about. Find a dataset on Kaggle or data.gov, build a full star schema model with relationships, write 10+ DAX measures including time intelligence, publish it to the Service, and set up RLS. The things you struggle to build will show you exactly what to study next.</p>
+<div class="callout"><strong>You already have the hardest skill:</strong> You understand data, you know what makes a good dashboard, and you know how users interact with analytics tools. Those skills transferred fully. DAX and the model are just new syntax for ideas you already have.</div>
+<h3>Key takeaways</h3>
+<ul>
+<li>PL-300 is achievable in 4-8 weeks from a Tableau background — use Microsoft Learn free materials as your primary study path.</li>
+<li>SQLBI.com is the best DAX deep-dive; Power BI Community forums are the best place to get help on specific questions.</li>
+<li>Build a real project — struggling through your own data teaches more than any course or tutorial.</li>
+</ul>`
+};
+
+const MODULES = [
+  {num:"01",title:"The Mental Model Shift",lessons:[{id:"1-1",title:"Tableau vs Power BI: The fundamental architecture difference",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"1-2",title:"Row-level vs columnar: Why Power BI uses an in-memory model",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"1-3",title:"Desktop vs Service vs Mobile: the three environments",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"1-4",title:"What Tableau calls VizQL \u2014 and what Power BI calls instead",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"1-5",title:"Licensing quick reference: Free, Pro, Premium, Fabric",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"}]},
+  {num:"02",title:"Power Query: Your New Data Prep Layer",lessons:[{id:"2-1",title:"What Power Query is (and isn't) \u2014 vs Tableau Prep",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"2-2",title:"Connecting to a data source and the Query Editor UI",tag:"handson",tagLabel:"Hands-on",tagBg:"#dcfce7",tagFg:"#166534"},{id:"2-3",title:"Applied Steps: the query pipeline that replaces Prep flows",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"2-4",title:"Merge vs Append: Power Query's joins and unions",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"2-5",title:"M language: what it is, when you need to write it",tag:"formula",tagLabel:"Formula",tagBg:"#fce7f3",tagFg:"#9d174d"},{id:"2-6",title:"Refresh behavior: scheduled vs manual vs DirectQuery",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"}]},
+  {num:"03",title:"The Data Model",lessons:[{id:"3-1",title:"Why Power BI needs explicit relationships (unlike Tableau blending)",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"3-2",title:"Star schema: fact tables, dimension tables, keys",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"3-3",title:"Creating and editing relationships in Model view",tag:"handson",tagLabel:"Hands-on",tagBg:"#dcfce7",tagFg:"#166534"},{id:"3-4",title:"Cross-filter direction: one-way vs bidirectional",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"3-5",title:"Many-to-many relationships: how to handle and when to avoid",tag:"advanced",tagLabel:"Advanced",tagBg:"#ede9fe",tagFg:"#5b21b6"},{id:"3-6",title:"Role-playing dimensions: the date table pattern",tag:"advanced",tagLabel:"Advanced",tagBg:"#ede9fe",tagFg:"#5b21b6"}]},
+  {num:"04",title:"DAX: The Calculation Engine",lessons:[{id:"4-1",title:"Measures vs Calculated Columns: the most important DAX distinction",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"4-2",title:"Filter context and row context explained without jargon",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"4-3",title:"CALCULATE: the one function that changes everything",tag:"formula",tagLabel:"Formula",tagBg:"#fce7f3",tagFg:"#9d174d"},{id:"4-4",title:"Common Tableau calc to DAX translations",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"4-5",title:"Time intelligence: SAMEPERIODLASTYEAR, DATEADD, TOTALYTD",tag:"formula",tagLabel:"Formula",tagBg:"#fce7f3",tagFg:"#9d174d"},{id:"4-6",title:"RANKX, TOPN, and ranking patterns",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"4-7",title:"Variables in DAX: VAR / RETURN pattern",tag:"formula",tagLabel:"Formula",tagBg:"#fce7f3",tagFg:"#9d174d"},{id:"4-8",title:"Debugging DAX with DAX Studio",tag:"handson",tagLabel:"Hands-on",tagBg:"#dcfce7",tagFg:"#166534"}]},
+  {num:"05",title:"Building Visuals & Reports",lessons:[{id:"5-1",title:"The visual field wells: Axis, Values, Legend, Filters pane",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"5-2",title:"Slicers vs Filters: what they affect and how to control scope",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"5-3",title:"Cross-highlighting and cross-filtering: how visuals interact",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"5-4",title:"Conditional formatting: color scales, icons, rules",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"5-5",title:"Drill-through, drill-down, and page navigation",tag:"handson",tagLabel:"Hands-on",tagBg:"#dcfce7",tagFg:"#166534"},{id:"5-6",title:"Bookmarks and Selection pane: interactive overlays",tag:"advanced",tagLabel:"Advanced",tagBg:"#ede9fe",tagFg:"#5b21b6"},{id:"5-7",title:"Themes: JSON-based styling vs Tableau workbook styles",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"}]},
+  {num:"06",title:"Publishing, Sharing & the Power BI Service",lessons:[{id:"6-1",title:"Publishing from Desktop: what gets uploaded and what doesn't",tag:"handson",tagLabel:"Hands-on",tagBg:"#dcfce7",tagFg:"#166534"},{id:"6-2",title:"Workspaces: personal vs shared, vs Tableau Server sites",tag:"compare",tagLabel:"Tableau \u2194 PBI",tagBg:"#e8f0fe",tagFg:"#1a56db"},{id:"6-3",title:"Dashboards vs Reports in the Service",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"6-4",title:"Row-Level Security (RLS): static and dynamic patterns",tag:"advanced",tagLabel:"Advanced",tagBg:"#ede9fe",tagFg:"#5b21b6"},{id:"6-5",title:"Scheduled refresh and the On-Premises Data Gateway",tag:"handson",tagLabel:"Hands-on",tagBg:"#dcfce7",tagFg:"#166534"},{id:"6-6",title:"Sharing options: links, apps, embed codes",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"},{id:"6-7",title:"Where to go next: PL-300 certification and resources",tag:"concept",tagLabel:"Concept",tagBg:"#fef9c3",tagFg:"#92400e"}]}
+];
+
+const STORAGE_KEY = 'pbi-course-v2';
+
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveProgress(p) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+}
+
+function countDone(prog) {
+  return Object.values(prog).filter(Boolean).length;
+}
+
+function updateGlobalProgress(prog) {
+  const done = countDone(prog);
+  const total = 39;
+  document.getElementById('prog-text').textContent = done + ' / ' + total;
+  document.getElementById('prog-fill').style.width = (done / total * 100) + '%';
+  document.getElementById('completion-banner').classList.toggle('show', done === total);
+}
+
+function updateModuleProgress(modNum, prog) {
+  const mod = MODULES.find(m => m.num === modNum);
+  if (!mod) return;
+  const total = mod.lessons.length;
+  const done = mod.lessons.filter(l => prog[l.id]).length;
+  const fill = document.getElementById('mod-fill-' + modNum);
+  const label = document.getElementById('mod-label-' + modNum);
+  if (fill) fill.style.width = (done / total * 100) + '%';
+  if (label) label.textContent = done + ' / ' + total;
+}
+
+function toggleLesson(lessonId) {
+  const row = document.getElementById('row-' + lessonId);
+  const isOpen = row.classList.contains('open');
+  // close all
+  document.querySelectorAll('.lesson-row.open').forEach(r => r.classList.remove('open'));
+  if (!isOpen) {
+    row.classList.add('open');
+    const body = row.querySelector('.lesson-body-content');
+    if (!body.innerHTML.trim()) {
+      body.innerHTML = LESSONS[lessonId] || '<p>Content not found.</p>';
+    }
+    row.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+
+function markComplete(lessonId, btn) {
+  const prog = getProgress();
+  if (prog[lessonId]) return;
+  prog[lessonId] = true;
+  saveProgress(prog);
+  btn.textContent = '✓ Completed';
+  btn.classList.add('done');
+  const check = document.getElementById('check-' + lessonId);
+  if (check) check.classList.add('done');
+  const modNum = lessonId.split('-')[0];
+  updateModuleProgress(modNum, prog);
+  updateGlobalProgress(prog);
+}
+
+function closeLesson(lessonId) {
+  document.getElementById('row-' + lessonId).classList.remove('open');
+}
+
+function resetProgress() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+function render() {
+  const prog = getProgress();
+  const root = document.getElementById('course-root');
+  root.innerHTML = '';
+
+  MODULES.forEach(mod => {
+    const div = document.createElement('div');
+    div.className = 'module';
+
+    const doneMod = mod.lessons.filter(l => prog[l.id]).length;
+    const totalMod = mod.lessons.length;
+
+    div.innerHTML = `
+      <div class="module-header">
+        <span class="module-num">Module ${mod.num}</span>
+        <span class="module-title">${mod.title}</span>
+      </div>
+      <div class="module-prog-wrap">
+        <div class="module-prog-bar">
+          <div class="module-prog-fill" id="mod-fill-${mod.num}" style="width:${doneMod/totalMod*100}%"></div>
+        </div>
+        <span class="module-prog-label" id="mod-label-${mod.num}">${doneMod} / ${totalMod}</span>
+      </div>
+    `;
+
+    mod.lessons.forEach(lesson => {
+      const done = !!prog[lesson.id];
+      const row = document.createElement('div');
+      row.className = 'lesson-row' + (done ? '' : '');
+      row.id = 'row-' + lesson.id;
+      row.innerHTML = `
+        <div class="lesson-header" onclick="toggleLesson('${lesson.id}')">
+          <div class="lesson-check${done ? ' done' : ''}" id="check-${lesson.id}"
+               onclick="event.stopPropagation()"></div>
+          <span class="lesson-title">${lesson.title}</span>
+          <span class="lesson-tag" style="background:${lesson.tagBg};color:${lesson.tagFg}">${lesson.tagLabel}</span>
+          <span class="lesson-chevron">▼</span>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-body-content"></div>
+          <div class="lesson-actions">
+            <button class="btn-complete${done ? ' done' : ''}"
+              onclick="markComplete('${lesson.id}', this)">
+              ${done ? '✓ Completed' : 'Mark as complete'}
+            </button>
+            <button class="btn-close" onclick="closeLesson('${lesson.id}')">Close</button>
+          </div>
+        </div>
+      `;
+      div.appendChild(row);
+    });
+
+    root.appendChild(div);
+  });
+
+  updateGlobalProgress(prog);
+}
+
+render();
+</script>
+</body>
+</html>
